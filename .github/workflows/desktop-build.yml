@@ -1,0 +1,206 @@
+name: Desktop Build (Windows, macOS, Linux)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Build Windows App
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+      
+      - name: Build Windows app
+        run: flutter build windows --release
+      
+      - name: Create Windows ZIP
+        run: |
+          cd build/windows/x64/runner/Release
+          Compress-Archive -Path * -DestinationPath ../../../../../artiq-windows-x64.zip
+      
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artiq-windows-x64
+          path: artiq-windows-x64.zip
+          retention-days: 30
+      
+      - name: Create Windows Release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: windows-v${{ github.run_number }}
+          name: ARTIQ Windows Build ${{ github.run_number }}
+          body: |
+            ## ARTIQ Windows App - Build ${{ github.run_number }}
+            
+            ### Installation:
+            1. Download `artiq-windows-x64.zip`
+            2. Extract the ZIP file
+            3. Run `artiq_flutter_app.exe`
+            
+            ### Requirements:
+            - Windows 10 or later (64-bit)
+            - ~100 MB storage space
+            
+            **Built on:** ${{ github.event.head_commit.timestamp }}
+            **Commit:** ${{ github.sha }}
+          files: artiq-windows-x64.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-macos:
+    name: Build macOS App
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Enable macOS desktop
+        run: flutter config --enable-macos-desktop
+      
+      - name: Build macOS app
+        run: flutter build macos --release
+      
+      - name: Create macOS ZIP
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r ../../../../../artiq-macos.zip artiq_flutter_app.app
+      
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artiq-macos
+          path: artiq-macos.zip
+          retention-days: 30
+      
+      - name: Create macOS Release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: macos-v${{ github.run_number }}
+          name: ARTIQ macOS Build ${{ github.run_number }}
+          body: |
+            ## ARTIQ macOS App - Build ${{ github.run_number }}
+            
+            ### Installation:
+            1. Download `artiq-macos.zip`
+            2. Extract the ZIP file
+            3. Move `artiq_flutter_app.app` to Applications folder
+            4. Right-click and select "Open" (first time only, due to Gatekeeper)
+            
+            ### Requirements:
+            - macOS 10.14 (Mojave) or later
+            - ~100 MB storage space
+            
+            **Note:** App is not notarized. You may need to allow it in System Preferences → Security & Privacy.
+            
+            **Built on:** ${{ github.event.head_commit.timestamp }}
+            **Commit:** ${{ github.sha }}
+          files: artiq-macos.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    name: Build Linux App
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: flutter pub get
+      
+      - name: Enable Linux desktop
+        run: flutter config --enable-linux-desktop
+      
+      - name: Build Linux app
+        run: flutter build linux --release
+      
+      - name: Create Linux tarball
+        run: |
+          cd build/linux/x64/release/bundle
+          tar -czf ../../../../../artiq-linux-x64.tar.gz *
+      
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: artiq-linux-x64
+          path: artiq-linux-x64.tar.gz
+          retention-days: 30
+      
+      - name: Create Linux Release
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: linux-v${{ github.run_number }}
+          name: ARTIQ Linux Build ${{ github.run_number }}
+          body: |
+            ## ARTIQ Linux App - Build ${{ github.run_number }}
+            
+            ### Installation:
+            1. Download `artiq-linux-x64.tar.gz`
+            2. Extract: `tar -xzf artiq-linux-x64.tar.gz`
+            3. Run: `./artiq_flutter_app`
+            
+            ### Requirements:
+            - Ubuntu 20.04 or later (or equivalent)
+            - GTK 3.0 or later
+            - ~100 MB storage space
+            
+            ### Dependencies:
+            ```bash
+            sudo apt-get install libgtk-3-0 libblkid1 liblzma5
+            ```
+            
+            **Built on:** ${{ github.event.head_commit.timestamp }}
+            **Commit:** ${{ github.sha }}
+          files: artiq-linux-x64.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
