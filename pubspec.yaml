@@ -1,0 +1,49 @@
+name: artiq_flutter
+description: A professional AI-powered design studio.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  google_sign_in: ^6.2.1
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+
+  # Connectivity
+  connectivity_plus: ^5.0.2
+
+  # Networking
+  http: ^1.1.0
+
+  # Unique IDs
+  uuid: ^4.3.3
+
+  # UI
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
