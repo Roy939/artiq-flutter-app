@@ -36,7 +36,8 @@ jobs:
         run: flutter config --enable-web
       
       - name: Build web app
-        run: flutter build web --release --base-href /artiq-flutter-app/
+        run: flutter build web --release --web-renderer html --base-href /artiq-flutter-app/
+
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
