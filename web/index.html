@@ -42,17 +42,32 @@
 <body>
   <script>
     window.addEventListener('load', function(ev) {
+      console.log('Page loaded, initializing Flutter...');
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
         onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
+          console.log('Flutter entrypoint loaded, initializing engine...');
+          engineInitializer.initializeEngine({
+            renderer: "canvaskit",
+          }).then(function(appRunner) {
+            console.log('Flutter engine initialized, running app...');
             appRunner.runApp();
+            console.log('Flutter app started!');
+          }).catch(function(error) {
+            console.error('Error initializing Flutter engine:', error);
           });
         }
+      }).catch(function(error) {
+        console.error('Error loading Flutter entrypoint:', error);
       });
+    });
+    
+    // Catch any unhandled errors
+    window.addEventListener('error', function(event) {
+      console.error('Global error:', event.error);
     });
   </script>
 </body>
