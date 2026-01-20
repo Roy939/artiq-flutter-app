@@ -51,7 +51,9 @@
         onEntrypointLoaded: function(engineInitializer) {
           console.log('Flutter entrypoint loaded, initializing engine...');
           engineInitializer.initializeEngine({
-            renderer: "canvaskit",
+            // Use auto renderer - it will choose HTML for better interactivity
+            // and CanvasKit only when needed for complex graphics
+            renderer: "auto",
           }).then(function(appRunner) {
             console.log('Flutter engine initialized, running app...');
             appRunner.runApp();
