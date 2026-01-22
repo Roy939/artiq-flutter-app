@@ -1,24 +1,27 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    id "dev.flutter.flutter-gradle-plugin"
 }
 
 android {
     namespace "com.artiq.app"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.artiq.app"
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutter.versionCode
-        versionName flutter.versionName
+        minSdk 21
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile(
+                    "proguard-android-optimize.txt"
+            ), "proguard-rules.pro"
         }
     }
 
@@ -32,9 +35,6 @@ android {
     }
 }
 
-flutter {
-    source "../.."
-}
-
 dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 }
