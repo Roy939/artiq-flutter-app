@@ -45,8 +45,9 @@ jobs:
           cd build/ios/iphoneos
           mkdir -p Payload
           cp -R Runner.app Payload/
-          zip -r ../../artiq-ios-unsigned.ipa Payload
-          cd ../../..
+          zip -r artiq-ios-unsigned.ipa Payload
+          mv artiq-ios-unsigned.ipa ../../../artiq-ios-unsigned.ipa
+          cd ../../../
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
