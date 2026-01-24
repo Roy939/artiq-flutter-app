@@ -18,9 +18,14 @@ class SyncService {
   SyncService(this._apiService, this._localStorageService);
 
   Future<void> syncDesigns() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
-      return; // No internet connection
+    try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none) {
+        return; // No internet connection
+      }
+    } catch (e) {
+      // Connectivity check failed (common on web), assume connected
+      print('Connectivity check failed: $e');
     }
 
     final user = FirebaseAuth.instance.currentUser;

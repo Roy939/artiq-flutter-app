@@ -9,9 +9,14 @@ class LocalStorageService {
   static const _designsKey = 'designs';
 
   Future<List<Design>> getDesigns() async {
-    final prefs = await SharedPreferences.getInstance();
-    final designsJson = prefs.getStringList(_designsKey) ?? [];
-    return designsJson.map((jsonString) => Design.fromJson(jsonDecode(jsonString))).toList();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final designsJson = prefs.getStringList(_designsKey) ?? [];
+      return designsJson.map((jsonString) => Design.fromJson(jsonDecode(jsonString))).toList();
+    } catch (e) {
+      print('Error loading designs from local storage: $e');
+      return []; // Return empty list on error
+    }
   }
 
   Future<void> saveDesigns(List<Design> designs) async {
