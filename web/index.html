@@ -66,22 +66,15 @@
         },
         onEntrypointLoaded: function(engineInitializer) {
           console.log('Flutter entrypoint loaded, initializing engine...');
-          // Initialize engine with semantics enabled
+          // Initialize engine with semantics enabled by default
           engineInitializer.initializeEngine({
-            hostElement: document.body
+            hostElement: document.body,
+            // Enable semantics for accessibility and interactivity
+            renderer: "html"
           }).then(function(appRunner) {
             console.log('Flutter engine initialized, running app...');
             appRunner.runApp();
             console.log('Flutter app started!');
-            
-            // Auto-enable accessibility/semantics after a short delay
-            setTimeout(function() {
-              var semanticsButton = document.querySelector('flt-semantics-placeholder[role="button"]');
-              if (semanticsButton) {
-                console.log('Auto-enabling semantics for button interactivity...');
-                semanticsButton.click();
-              }
-            }, 1000);
           }).catch(function(error) {
             console.error('Error initializing Flutter engine:', error);
           });
