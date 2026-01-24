@@ -28,11 +28,19 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
           IconButton(
             icon: const Icon(Icons.save),
             onPressed: () async {
+              final user = FirebaseAuth.instance.currentUser;
+              if (user == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('You must be logged in to save designs')),
+                );
+                return;
+              }
+              
               final drawings = _penToolKey.currentState?.drawings;
               if (drawings != null && drawings.isNotEmpty) {
                 final newDesign = Design(
                   id: const Uuid().v4(),
-                  userId: FirebaseAuth.instance.currentUser!.uid,
+                  userId: user.uid,
                   title: _titleController.text,
                   content: jsonEncode(drawings.map((d) => {
                     'points': d.points.map((p) => {'dx': p.dx, 'dy': p.dy}).toList(),
