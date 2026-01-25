@@ -14,7 +14,18 @@ class DesignGalleryScreen extends ConsumerWidget {
     final designs = ref.watch(designsProvider);
 
     return Scaffold(
-      body: Center(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF667eea), // Purple
+              Color(0xFF764ba2), // Deeper purple
+            ],
+          ),
+        ),
+        child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: ResponsiveLayout.getMaxContentWidth(context),
@@ -91,6 +102,7 @@ class DesignGalleryScreen extends ConsumerWidget {
                   ),
                 ),
         ),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -106,13 +118,27 @@ class DesignGalleryScreen extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Container(
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(48),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.95),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.palette_outlined,
             size: 120,
-            color: Colors.grey[300],
+            color: const Color(0xFF667eea).withOpacity(0.3),
           ),
           const SizedBox(height: 24),
           Text(
@@ -146,6 +172,7 @@ class DesignGalleryScreen extends ConsumerWidget {
             ),
           ),
         ],
+        ),
       ),
     );
   }
