@@ -47,6 +47,12 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
 
     final tool = widget.canvasState.currentTool;
 
+    if (tool == DrawingTool.text) {
+      // Show dialog to enter text
+      _showTextDialog(localPosition);
+      return;
+    }
+
     if (tool == DrawingTool.pen) {
       // Start a new stroke
       final stroke = DrawingStroke(
@@ -142,5 +148,58 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
 
     _startPoint = null;
     _currentStrokePoints = [];
+  }
+
+  void _showTextDialog(Offset position) {
+    final textController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Text'),
+        content: TextField(
+          controller: textController,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter your text...',
+            border: OutlineInputBorder(),
+          ),
+          maxLines: null,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final text = textController.text.trim();
+              if (text.isNotEmpty) {
+                final textElement = DrawingText(
+                  id: _uuid.v4(),
+                  color: widget.canvasState.currentColor,
+                  strokeWidth: widget.canvasState.currentStrokeWidth,
+                  createdAt: DateTime.now(),
+                  text: text,
+                  position: position,
+                  fontSize: 24.0,
+                );
+                
+                final newElements = [
+                  ...widget.canvasState.elements,
+                  textElement,
+                ];
+                
+                widget.onStateChanged(
+                  widget.canvasState.copyWith(elements: newElements),
+                );
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
   }
 }

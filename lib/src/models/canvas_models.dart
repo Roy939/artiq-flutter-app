@@ -30,6 +30,8 @@ abstract class DrawingElement {
         return DrawingCircle.fromJson(json);
       case 'line':
         return DrawingLine.fromJson(json);
+      case 'text':
+        return DrawingText.fromJson(json);
       default:
         throw Exception('Unknown drawing element type: $type');
     }
@@ -218,12 +220,59 @@ class DrawingLine extends DrawingElement {
   }
 }
 
+/// Represents a text element
+class DrawingText extends DrawingElement {
+  final String text;
+  final Offset position;
+  final double fontSize;
+
+  DrawingText({
+    required super.id,
+    required super.color,
+    required super.strokeWidth,
+    required super.createdAt,
+    required this.text,
+    required this.position,
+    this.fontSize = 24.0,
+  });
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'text',
+      'id': id,
+      'color': color.value,
+      'strokeWidth': strokeWidth,
+      'createdAt': createdAt.toIso8601String(),
+      'text': text,
+      'position': {'x': position.dx, 'y': position.dy},
+      'fontSize': fontSize,
+    };
+  }
+
+  factory DrawingText.fromJson(Map<String, dynamic> json) {
+    return DrawingText(
+      id: json['id'] as String,
+      color: Color(json['color'] as int),
+      strokeWidth: (json['strokeWidth'] as num).toDouble(),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      text: json['text'] as String,
+      position: Offset(
+        (json['position']['x'] as num).toDouble(),
+        (json['position']['y'] as num).toDouble(),
+      ),
+      fontSize: (json['fontSize'] as num?)?.toDouble() ?? 24.0,
+    );
+  }
+}
+
 /// Drawing tool types
 enum DrawingTool {
   pen,
   rectangle,
   circle,
   line,
+  text,
   eraser,
   select,
 }

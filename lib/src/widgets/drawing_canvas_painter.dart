@@ -39,6 +39,8 @@ class DrawingCanvasPainter extends CustomPainter {
       _drawCircle(canvas, element, paint);
     } else if (element is DrawingLine) {
       _drawLine(canvas, element, paint);
+    } else if (element is DrawingText) {
+      _drawText(canvas, element);
     }
   }
 
@@ -82,6 +84,26 @@ class DrawingCanvasPainter extends CustomPainter {
   void _drawLine(Canvas canvas, DrawingLine line, Paint paint) {
     paint.style = PaintingStyle.stroke;
     canvas.drawLine(line.start, line.end, paint);
+  }
+
+  void _drawText(Canvas canvas, DrawingText textElement) {
+    final textStyle = TextStyle(
+      color: textElement.color,
+      fontSize: textElement.fontSize,
+    );
+
+    final textSpan = TextSpan(
+      text: textElement.text,
+      style: textStyle,
+    );
+
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout();
+    textPainter.paint(canvas, textElement.position);
   }
 
   @override
