@@ -65,6 +65,45 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       widget.onStateChanged(
         widget.canvasState.copyWith(tempElement: stroke),
       );
+    } else if (tool == DrawingTool.rectangle) {
+      // Initialize rectangle
+      final rectangle = DrawingRectangle(
+        id: _uuid.v4(),
+        color: widget.canvasState.currentColor,
+        strokeWidth: widget.canvasState.currentStrokeWidth,
+        createdAt: DateTime.now(),
+        topLeft: localPosition,
+        bottomRight: localPosition,
+      );
+      widget.onStateChanged(
+        widget.canvasState.copyWith(tempElement: rectangle),
+      );
+    } else if (tool == DrawingTool.circle) {
+      // Initialize circle
+      final circle = DrawingCircle(
+        id: _uuid.v4(),
+        color: widget.canvasState.currentColor,
+        strokeWidth: widget.canvasState.currentStrokeWidth,
+        createdAt: DateTime.now(),
+        center: localPosition,
+        radius: 0,
+      );
+      widget.onStateChanged(
+        widget.canvasState.copyWith(tempElement: circle),
+      );
+    } else if (tool == DrawingTool.line) {
+      // Initialize line
+      final line = DrawingLine(
+        id: _uuid.v4(),
+        color: widget.canvasState.currentColor,
+        strokeWidth: widget.canvasState.currentStrokeWidth,
+        createdAt: DateTime.now(),
+        startPoint: localPosition,
+        endPoint: localPosition,
+      );
+      widget.onStateChanged(
+        widget.canvasState.copyWith(tempElement: line),
+      );
     }
   }
 

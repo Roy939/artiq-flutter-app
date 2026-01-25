@@ -1,3 +1,5 @@
+import 'canvas_models.dart';
+
 class DesignTemplate {
   final String id;
   final String name;
@@ -6,6 +8,7 @@ class DesignTemplate {
   final int height;
   final String description;
   final String? thumbnailUrl;
+  final List<DrawingElement> elements;
 
   const DesignTemplate({
     required this.id,
@@ -15,6 +18,7 @@ class DesignTemplate {
     required this.height,
     required this.description,
     this.thumbnailUrl,
+    this.elements = const [],
   });
 
   // Helper method to get display size

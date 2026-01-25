@@ -27,6 +27,19 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
   final List<CanvasState> _redoStack = [];
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize canvas with template elements if template is provided
+    if (widget.templateToUse != null) {
+      _canvasState = CanvasState(
+        elements: List.from(widget.templateToUse!.elements),
+      );
+      // Set default title from template name
+      _titleController.text = widget.templateToUse!.name;
+    }
+  }
+
+  @override
   void dispose() {
     _titleController.dispose();
     super.dispose();
