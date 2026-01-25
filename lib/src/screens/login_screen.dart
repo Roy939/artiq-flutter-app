@@ -130,11 +130,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               Color(0xFF020617), // Darker slate
             ],
           ),
-          image: DecorationImage(
-            image: AssetImage('assets/brush_strokes.png'),
-            fit: BoxFit.cover,
-            opacity: 0.15,
-          ),
         ),
         child: Center(
         child: SingleChildScrollView(
