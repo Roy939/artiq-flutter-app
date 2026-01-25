@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:artiq_flutter/src/data/designs_provider.dart';
 import 'package:artiq_flutter/src/models/design.dart';
 import 'package:artiq_flutter/src/services/sync_service.dart';
+import 'package:artiq_flutter/src/services/auth_service.dart';
 import 'package:artiq_flutter/src/screens/create_design_screen.dart';
 
 class DesignGalleryScreen extends ConsumerWidget {
@@ -24,99 +25,297 @@ class DesignGalleryScreen extends ConsumerWidget {
               Color(0xFF020617), // Darker slate
             ],
           ),
-          image: DecorationImage(
-            image: AssetImage('assets/brush_strokes.png'),
-            fit: BoxFit.cover,
-            opacity: 0.15,
-          ),
         ),
-        child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: ResponsiveLayout.getMaxContentWidth(context),
-          ),
-          child: designs.isEmpty
-              ? _buildEmptyState(context)
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    await ref.read(syncServiceProvider).syncDesigns();
-                    await ref.read(designsProvider.notifier).refreshDesigns();
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: designs.length,
-                    itemBuilder: (context, index) {
-                      final design = designs[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        elevation: 2,
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(16),
-                          leading: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(Icons.image, size: 32, color: Colors.grey),
-                          ),
-                          title: Text(
-                            design.title,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              'Last updated: ${_formatDate(design.updatedAt)}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                design.isSynced ? Icons.cloud_done : Icons.cloud_off,
-                                color: design.isSynced ? Colors.green : Colors.orange,
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                design.isSynced ? 'Synced' : 'Local',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: design.isSynced ? Colors.green : Colors.orange,
-                                ),
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            // TODO: Navigate to design editor
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Opening "${design.title}"...'),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
+        child: Column(
+          children: [
+            // Professional Top Bar
+            _buildTopBar(context, ref),
+            
+            // Main Content Area
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: ResponsiveLayout.getMaxContentWidth(context),
                   ),
+                  child: designs.isEmpty
+                      ? _buildEmptyState(context)
+                      : RefreshIndicator(
+                          onRefresh: () async {
+                            await ref.read(syncServiceProvider).syncDesigns();
+                            await ref.read(designsProvider.notifier).refreshDesigns();
+                          },
+                          child: _buildDesignGrid(context, designs),
+                        ),
                 ),
-        ),
+              ),
+            ),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
+    );
+  }
+
+  // Professional Top Bar with Logo and Profile
+  Widget _buildTopBar(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.3),
+        border: Border(
+          bottom: BorderSide(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          // ARTIQ Logo
+          Image.asset(
+            'assets/images/logo/artiq_logo.png',
+            height: 40,
+          ),
+          const SizedBox(width: 16),
+          const Text(
+            'ARTIQ',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          
+          const Spacer(),
+          
+          // Profile Icon with Dropdown
+          PopupMenuButton<String>(
+            icon: const CircleAvatar(
+              backgroundColor: Colors.white24,
+              child: Icon(Icons.person, color: Colors.white),
+            ),
+            onSelected: (value) async {
+              if (value == 'logout') {
+                await ref.read(authServiceProvider).signOut();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'account',
+                child: Row(
+                  children: [
+                    Icon(Icons.account_circle),
+                    SizedBox(width: 12),
+                    Text('Account Settings'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, color: Colors.red),
+                    SizedBox(width: 12),
+                    Text('Logout', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Professional Grid Layout
+  Widget _buildDesignGrid(BuildContext context, List<Design> designs) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(24),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _getCrossAxisCount(context),
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+        childAspectRatio: 0.85,
+      ),
+      itemCount: designs.length + 1, // +1 for "New Design" card
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return _buildNewDesignCard(context);
+        }
+        final design = designs[index - 1];
+        return _buildDesignCard(context, design);
+      },
+    );
+  }
+
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1200) return 4;
+    if (width > 800) return 3;
+    if (width > 600) return 2;
+    return 1;
+  }
+
+  // "New Design" Card (First in Grid)
+  Widget _buildNewDesignCard(BuildContext context) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const CreateDesignScreen()),
           );
         },
-        icon: const Icon(Icons.add),
-        label: const Text('New Design'),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.blue.shade400,
+                Colors.purple.shade400,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_circle_outline,
+                size: 64,
+                color: Colors.white,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Create New Design',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Individual Design Card
+  Widget _buildDesignCard(BuildContext context, Design design) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: InkWell(
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Opening "${design.title}"...'),
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Thumbnail Area
+            Expanded(
+              flex: 3,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Icon(
+                        Icons.brush,
+                        size: 48,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    // Sync Status Badge
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: design.isSynced ? Colors.green : Colors.orange,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              design.isSynced ? Icons.cloud_done : Icons.cloud_off,
+                              color: Colors.white,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              design.isSynced ? 'Synced' : 'Local',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Info Area
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      design.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _formatDate(design.updatedAt),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -138,45 +337,44 @@ class DesignGalleryScreen extends ConsumerWidget {
           ],
         ),
         child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.palette_outlined,
-            size: 120,
-            color: const Color(0xFF667eea).withOpacity(0.3),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'No Designs Yet',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[700],
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/logo/artiq_logo.png',
+              width: 120,
             ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'Create your first design to get started!',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
+            const SizedBox(height: 24),
+            Text(
+              'No Designs Yet',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey[700],
+              ),
             ),
-          ),
-          const SizedBox(height: 32),
-          ElevatedButton.icon(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const CreateDesignScreen()),
-              );
-            },
-            icon: const Icon(Icons.add),
-            label: const Text('Create Design'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              textStyle: const TextStyle(fontSize: 18),
+            const SizedBox(height: 12),
+            Text(
+              'Create your first design to get started!',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const CreateDesignScreen()),
+                );
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Create Design'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                textStyle: const TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
         ),
       ),
     );
