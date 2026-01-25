@@ -24,6 +24,11 @@ class DesignGalleryScreen extends ConsumerWidget {
               Color(0xFF764ba2), // Deeper purple
             ],
           ),
+          image: DecorationImage(
+            image: AssetImage('assets/brush_strokes.png'),
+            fit: BoxFit.cover,
+            opacity: 0.15,
+          ),
         ),
         child: Center(
         child: ConstrainedBox(
