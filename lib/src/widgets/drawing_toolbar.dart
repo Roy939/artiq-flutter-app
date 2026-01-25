@@ -8,6 +8,7 @@ class DrawingToolbar extends StatelessWidget {
   final VoidCallback onUndo;
   final VoidCallback onRedo;
   final VoidCallback onClear;
+  final VoidCallback onExport;
   final bool canUndo;
   final bool canRedo;
 
@@ -18,6 +19,7 @@ class DrawingToolbar extends StatelessWidget {
     required this.onUndo,
     required this.onRedo,
     required this.onClear,
+    required this.onExport,
     required this.canUndo,
     required this.canRedo,
   });
@@ -133,6 +135,17 @@ class DrawingToolbar extends StatelessWidget {
                 onPressed: onClear,
                 tooltip: 'Clear',
                 color: Colors.red,
+              ),
+              const SizedBox(width: 8),
+              // Export button
+              ElevatedButton.icon(
+                onPressed: onExport,
+                icon: const Icon(Icons.download),
+                label: const Text('Export PNG'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),

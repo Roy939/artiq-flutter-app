@@ -88,6 +88,17 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
     );
   }
 
+  void _exportPNG() {
+    // For web, users can right-click on canvas and save as image
+    // For mobile/desktop, we would need additional packages like screenshot or image
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Right-click on canvas and select "Save image as..." to export'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
   Future<void> _saveDesign() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -196,6 +207,7 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
                 onUndo: _undo,
                 onRedo: _redo,
                 onClear: _clear,
+                onExport: _exportPNG,
                 canUndo: _undoStack.isNotEmpty,
                 canRedo: _redoStack.isNotEmpty,
               ),
