@@ -6,12 +6,15 @@ import 'package:uuid/uuid.dart';
 import 'package:artiq_flutter/src/data/designs_provider.dart';
 import 'package:artiq_flutter/src/models/design.dart';
 import 'package:artiq_flutter/src/models/canvas_models.dart';
+import 'package:artiq_flutter/src/models/template.dart';
 import 'package:artiq_flutter/src/widgets/drawing_canvas.dart';
 import 'package:artiq_flutter/src/widgets/drawing_toolbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateDesignScreen extends ConsumerStatefulWidget {
-  const CreateDesignScreen({Key? key}) : super(key: key);
+  final DesignTemplate? templateToUse;
+  
+  const CreateDesignScreen({Key? key, this.templateToUse}) : super(key: key);
 
   @override
   _CreateDesignScreenState createState() => _CreateDesignScreenState();

@@ -6,6 +6,7 @@ import 'package:artiq_flutter/src/models/design.dart';
 import 'package:artiq_flutter/src/services/sync_service.dart';
 import 'package:artiq_flutter/src/services/auth_service.dart';
 import 'package:artiq_flutter/src/screens/create_design_screen.dart';
+import 'package:artiq_flutter/src/screens/templates_screen.dart';
 
 class DesignGalleryScreen extends ConsumerWidget {
   const DesignGalleryScreen({Key? key}) : super(key: key);
@@ -87,6 +88,30 @@ class DesignGalleryScreen extends ConsumerWidget {
           ),
           
           const Spacer(),
+          
+          // Templates Button
+          TextButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const TemplatesScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.grid_view, color: Colors.white),
+            label: const Text(
+              'Templates',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+            ),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.white.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
           
           // Profile Icon with Dropdown
           PopupMenuButton<String>(
