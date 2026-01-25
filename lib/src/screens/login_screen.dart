@@ -126,8 +126,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF667eea), // Purple
-              Color(0xFF764ba2), // Deeper purple
+              Color(0xFF0F172A), // Dark slate
+              Color(0xFF020617), // Darker slate
             ],
           ),
           image: DecorationImage(
@@ -159,6 +159,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                Image.asset(
+                  'assets/images/logo/artiq_logo.png',
+                  width: 150,
+                  height: 100,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 16),
                 const Text(
                   'Welcome to ARTIQ',
                   style: TextStyle(

@@ -20,8 +20,8 @@ class DesignGalleryScreen extends ConsumerWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF667eea), // Purple
-              Color(0xFF764ba2), // Deeper purple
+              Color(0xFF0F172A), // Dark slate
+              Color(0xFF020617), // Darker slate
             ],
           ),
           image: DecorationImage(

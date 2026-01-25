@@ -46,3 +46,4 @@ flutter:
 
   assets:
     - assets/brush_strokes.png
+    - assets/images/logo/artiq_logo.png
