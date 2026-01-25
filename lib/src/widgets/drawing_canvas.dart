@@ -98,8 +98,8 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         color: widget.canvasState.currentColor,
         strokeWidth: widget.canvasState.currentStrokeWidth,
         createdAt: DateTime.now(),
-        startPoint: localPosition,
-        endPoint: localPosition,
+        start: localPosition,
+        end: localPosition,
       );
       widget.onStateChanged(
         widget.canvasState.copyWith(tempElement: line),
