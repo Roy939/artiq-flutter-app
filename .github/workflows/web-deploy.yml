@@ -2,7 +2,7 @@ name: Web Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
 
 permissions:
@@ -16,35 +16,36 @@ concurrency:
 
 jobs:
   build-web:
+    name: Build Web App
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+      
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.0"
-          channel: stable
-
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
       - name: Install dependencies
         run: flutter pub get
-
+      
       - name: Enable web
         run: flutter config --enable-web
-
+      
       - name: Build web app
-        run: flutter build web --release --base-href /artiq-flutter-app/
-
+        run: flutter build web --release --web-renderer html --base-href /artiq-flutter-app/
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
-
+      
       - name: Upload artifact for Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
-
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
