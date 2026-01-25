@@ -10,12 +10,7 @@ class AuthService {
   GoogleSignIn? _googleSignIn;
 
   GoogleSignIn get _getGoogleSignIn {
-    _googleSignIn ??= GoogleSignIn(
-      // Web-specific configuration
-      clientId: kIsWeb 
-        ? '280578944842-v8nvsj23kv8n8ar3arju57fvng181f0f.apps.googleusercontent.com' 
-        : null,
-    );
+    _googleSignIn ??= GoogleSignIn();
     return _googleSignIn!;
   }
 
