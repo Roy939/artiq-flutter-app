@@ -75,6 +75,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         createdAt: DateTime.now(),
         topLeft: localPosition,
         bottomRight: localPosition,
+        filled: true,
       );
       widget.onStateChanged(
         widget.canvasState.copyWith(tempElement: rectangle),
@@ -88,6 +89,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         createdAt: DateTime.now(),
         center: localPosition,
         radius: 0,
+        filled: true,
       );
       widget.onStateChanged(
         widget.canvasState.copyWith(tempElement: circle),
@@ -136,6 +138,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         createdAt: DateTime.now(),
         topLeft: _startPoint!,
         bottomRight: localPosition,
+        filled: true,
       );
       widget.onStateChanged(
         widget.canvasState.copyWith(tempElement: rectangle),
@@ -151,6 +154,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         createdAt: DateTime.now(),
         center: _startPoint!,
         radius: radius,
+        filled: true,
       );
       widget.onStateChanged(
         widget.canvasState.copyWith(tempElement: circle),
