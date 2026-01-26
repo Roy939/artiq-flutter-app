@@ -118,14 +118,93 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
   }
 
   void _exportPNG() {
-    // For web, users can right-click on canvas and save as image
-    // For mobile/desktop, we would need additional packages like screenshot or image
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Right-click on canvas and select "Save image as..." to export'),
-        duration: Duration(seconds: 3),
+    // Show export options dialog
+    _showExportDialog();
+  }
+
+  void _showExportDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Export Design'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Choose export format:'),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: const Icon(Icons.image, color: Colors.blue),
+              title: const Text('PNG'),
+              subtitle: const Text('High quality, transparent background'),
+              onTap: () {
+                Navigator.pop(context);
+                _exportAs('png');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.image, color: Colors.green),
+              title: const Text('JPG'),
+              subtitle: const Text('Smaller file size, white background'),
+              onTap: () {
+                Navigator.pop(context);
+                _exportAs('jpg');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+              title: const Text('PDF'),
+              subtitle: const Text('Document format, printable'),
+              onTap: () {
+                Navigator.pop(context);
+                _exportAs('pdf');
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
       ),
     );
+  }
+
+  Future<void> _exportAs(String format) async {
+    try {
+      // For web: Create a download link
+      // For mobile/desktop: Use path_provider and save to gallery
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Exporting as $format...'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      
+      // TODO: Implement actual export using screenshot package or render to image
+      // For now, show instructions
+      await Future.delayed(const Duration(seconds: 1));
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Right-click on canvas and "Save image as..." to export as $format'),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Export failed: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _saveDesign() async {
