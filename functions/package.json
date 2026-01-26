@@ -1,0 +1,25 @@
+{
+  "name": "artiq-functions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "keywords": [],
+  "author": "ARTIQ",
+  "license": "MIT",
+  "description": "Firebase Cloud Functions for ARTIQ Stripe integration",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "firebase-admin": "^13.6.0",
+    "firebase-functions": "^7.0.3",
+    "stripe": "^20.2.0"
+  }
+}

@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/subscription_model.dart';
 
 class SubscriptionProvider with ChangeNotifier {
@@ -107,15 +110,76 @@ class SubscriptionProvider with ChangeNotifier {
   SubscriptionTier get currentTier => _subscription?.tier ?? SubscriptionTier.free;
 
   Future<void> openCheckout(BuildContext context) async {
-    // Show dialog that Stripe checkout will be implemented
+    final user = _auth.currentUser;
+    if (user == null) {
+      _showError(context, 'Please log in to upgrade');
+      return;
+    }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Get Firebase ID token for authentication
+      final idToken = await user.getIdToken();
+      
+      // Call Firebase Cloud Function to create Stripe Checkout Session
+      final response = await http.post(
+        Uri.parse('https://us-central1-artiq-flutter.cloudfunctions.net/createCheckoutSession'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+        body: json.encode({
+          'successUrl': 'https://roy939.github.io/artiq-flutter-app/?success=true',
+          'cancelUrl': 'https://roy939.github.io/artiq-flutter-app/?canceled=true',
+        }),
+      );
+
+      // Close loading dialog
+      if (context.mounted) Navigator.pop(context);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final checkoutUrl = data['url'];
+        
+        // Open Stripe Checkout in browser
+        final uri = Uri.parse(checkoutUrl);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          if (context.mounted) {
+            _showError(context, 'Could not open checkout page');
+          }
+        }
+      } else {
+        if (context.mounted) {
+          _showError(context, 'Failed to create checkout session: ${response.body}');
+        }
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (context.mounted) Navigator.pop(context);
+      
+      if (context.mounted) {
+        _showError(context, 'Error: $e');
+      }
+      debugPrint('[ARTIQ ERROR] Failed to open checkout: $e');
+    }
+  }
+
+  void _showError(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Upgrade to Pro'),
-        content: const Text(
-          'Stripe checkout integration is being set up. '
-          'You will be redirected to a secure payment page to complete your subscription at \$8.99/month.',
-        ),
+        title: const Text('Error'),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
