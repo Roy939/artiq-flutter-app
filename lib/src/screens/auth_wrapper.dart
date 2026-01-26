@@ -24,7 +24,7 @@ class AuthWrapper extends StatelessWidget {
           // Load subscription when user is logged in
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Provider.of<SubscriptionProvider>(context, listen: false)
-                .loadSubscription(snapshot.data!.uid);
+                .loadSubscription();
           });
           return const HomeScreen();
         } else {

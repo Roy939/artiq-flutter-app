@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/subscription_model.dart';
@@ -101,5 +102,27 @@ class SubscriptionProvider with ChangeNotifier {
   bool canUseFont(String fontFamily) {
     if (_subscription == null) return fontFamily == 'Roboto';
     return _subscription!.availableFonts.contains(fontFamily);
+  }
+
+  SubscriptionTier get currentTier => _subscription?.tier ?? SubscriptionTier.free;
+
+  Future<void> openCheckout(BuildContext context) async {
+    // Show dialog that Stripe checkout will be implemented
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Upgrade to Pro'),
+        content: const Text(
+          'Stripe checkout integration is being set up. '
+          'You will be redirected to a secure payment page to complete your subscription at \$8.99/month.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
