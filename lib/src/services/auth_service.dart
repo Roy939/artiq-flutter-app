@@ -14,6 +14,22 @@ class AuthService {
     return _googleSignIn!;
   }
 
+  Future<User?> signUpWithEmailAndPassword(String email, String password) async {
+    try {
+      final UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      print('Email/Password sign-up error: ${e.message}');
+      return null;
+    } catch (e) {
+      print('Unexpected sign-up error: $e');
+      return null;
+    }
+  }
+
   Future<User?> signInWithEmailAndPassword(String email, String password) async {
     try {
       final UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
