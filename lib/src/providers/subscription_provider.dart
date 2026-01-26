@@ -131,7 +131,7 @@ class SubscriptionProvider with ChangeNotifier {
       
       // Call Firebase Cloud Function to create Stripe Checkout Session
       final response = await http.post(
-        Uri.parse('https://us-central1-artiq-flutter.cloudfunctions.net/createCheckoutSession'),
+        Uri.parse('https://us-central1-artiq-1ebb2.cloudfunctions.net/createCheckoutSession'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $idToken',
