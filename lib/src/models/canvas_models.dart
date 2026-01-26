@@ -284,6 +284,8 @@ class CanvasState {
   final Color currentColor;
   final double currentStrokeWidth;
   final DrawingElement? tempElement; // Element being drawn
+  final double zoomLevel; // Canvas zoom level (1.0 = 100%)
+  final Offset panOffset; // Canvas pan offset for scrolling
 
   CanvasState({
     this.elements = const [],
@@ -291,6 +293,8 @@ class CanvasState {
     this.currentColor = Colors.black,
     this.currentStrokeWidth = 3.0,
     this.tempElement,
+    this.zoomLevel = 1.0,
+    this.panOffset = Offset.zero,
   });
 
   CanvasState copyWith({
@@ -299,6 +303,8 @@ class CanvasState {
     Color? currentColor,
     double? currentStrokeWidth,
     DrawingElement? tempElement,
+    double? zoomLevel,
+    Offset? panOffset,
     bool clearTemp = false,
   }) {
     return CanvasState(
@@ -307,6 +313,8 @@ class CanvasState {
       currentColor: currentColor ?? this.currentColor,
       currentStrokeWidth: currentStrokeWidth ?? this.currentStrokeWidth,
       tempElement: clearTemp ? null : (tempElement ?? this.tempElement),
+      zoomLevel: zoomLevel ?? this.zoomLevel,
+      panOffset: panOffset ?? this.panOffset,
     );
   }
 

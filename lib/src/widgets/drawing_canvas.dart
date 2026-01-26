@@ -24,19 +24,44 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: _onPanStart,
-      onPanUpdate: _onPanUpdate,
-      onPanEnd: _onPanEnd,
-      child: CustomPaint(
-        foregroundPainter: DrawingCanvasPainter(
-          elements: widget.canvasState.elements,
-          tempElement: widget.canvasState.tempElement,
-        ),
-        child: Container(
-          color: Colors.white,
-        ),
-      ),
+    // Get canvas size from template or default
+    final canvasWidth = widget.canvasState.elements.isNotEmpty
+        ? _getCanvasWidth()
+        : 800.0;
+    final canvasHeight = widget.canvasState.elements.isNotEmpty
+        ? _getCanvasHeight()
+        : 600.0;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Calculate scale to fit canvas in viewport
+        final scaleX = constraints.maxWidth / canvasWidth;
+        final scaleY = constraints.maxHeight / canvasHeight;
+        final scale = (scaleX < scaleY ? scaleX : scaleY).clamp(0.1, 1.0);
+
+        return Transform.scale(
+          scale: scale,
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: canvasWidth,
+            height: canvasHeight,
+            child: GestureDetector(
+              onPanStart: _onPanStart,
+              onPanUpdate: _onPanUpdate,
+              onPanEnd: _onPanEnd,
+              child: CustomPaint(
+                foregroundPainter: DrawingCanvasPainter(
+                  elements: widget.canvasState.elements,
+                  tempElement: widget.canvasState.tempElement,
+                ),
+                child: Container(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -245,5 +270,45 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         ],
       ),
     );
+  }
+
+  double _getCanvasWidth() {
+    double maxX = 800.0;
+    for (final element in widget.canvasState.elements) {
+      if (element is DrawingRectangle) {
+        final right = element.bottomRight.dx;
+        if (right > maxX) maxX = right;
+      } else if (element is DrawingCircle) {
+        final right = element.center.dx + element.radius;
+        if (right > maxX) maxX = right;
+      } else if (element is DrawingLine) {
+        final right = element.end.dx > element.start.dx ? element.end.dx : element.start.dx;
+        if (right > maxX) maxX = right;
+      } else if (element is DrawingText) {
+        final right = element.position.dx + (element.text.length * element.fontSize * 0.6);
+        if (right > maxX) maxX = right;
+      }
+    }
+    return maxX;
+  }
+
+  double _getCanvasHeight() {
+    double maxY = 600.0;
+    for (final element in widget.canvasState.elements) {
+      if (element is DrawingRectangle) {
+        final bottom = element.bottomRight.dy;
+        if (bottom > maxY) maxY = bottom;
+      } else if (element is DrawingCircle) {
+        final bottom = element.center.dy + element.radius;
+        if (bottom > maxY) maxY = bottom;
+      } else if (element is DrawingLine) {
+        final bottom = element.end.dy > element.start.dy ? element.end.dy : element.start.dy;
+        if (bottom > maxY) maxY = bottom;
+      } else if (element is DrawingText) {
+        final bottom = element.position.dy + element.fontSize;
+        if (bottom > maxY) maxY = bottom;
+      }
+    }
+    return maxY;
   }
 }
