@@ -29,7 +29,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       onPanUpdate: _onPanUpdate,
       onPanEnd: _onPanEnd,
       child: CustomPaint(
-        painter: DrawingCanvasPainter(
+        foregroundPainter: DrawingCanvasPainter(
           elements: widget.canvasState.elements,
           tempElement: widget.canvasState.tempElement,
         ),
