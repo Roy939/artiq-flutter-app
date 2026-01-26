@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:convert';
+import 'package:file_picker/file_picker.dart';
 import '../models/canvas_models.dart';
 import 'drawing_canvas_painter.dart';
 
@@ -76,6 +78,12 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
     if (tool == DrawingTool.text) {
       // Show dialog to enter text
       _showTextDialog(localPosition);
+      return;
+    }
+
+    if (tool == DrawingTool.image) {
+      // Show image picker
+      _showImagePicker(localPosition);
       return;
     }
 
@@ -310,5 +318,46 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       }
     }
     return maxY;
+  }
+
+  Future<void> _showImagePicker(Offset position) async {
+    // For web, we need to use file_picker package
+    try {
+      // Import at top: import 'package:file_picker/file_picker.dart';
+      // Import at top: import 'dart:convert';
+      
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        if (file.bytes != null) {
+          // Convert to base64
+          final base64Image = base64Encode(file.bytes!);
+          
+          // Create image element
+          final image = DrawingImage(
+            id: _uuid.v4(),
+            color: Colors.transparent,
+            strokeWidth: 0,
+            createdAt: DateTime.now(),
+            imageData: base64Image,
+            position: position,
+            width: 200, // Default width
+            height: 200, // Default height
+          );
+
+          // Add to canvas
+          final newElements = [...widget.canvasState.elements, image];
+          widget.onStateChanged(
+            widget.canvasState.copyWith(elements: newElements),
+          );
+        }
+      }
+    } catch (e) {
+      print('[ARTIQ ERROR] Image upload failed: $e');
+    }
   }
 }

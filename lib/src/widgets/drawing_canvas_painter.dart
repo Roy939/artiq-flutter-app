@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'dart:ui' as ui;
 import '../models/canvas_models.dart';
 
 /// Custom painter for rendering the drawing canvas
@@ -41,6 +43,8 @@ class DrawingCanvasPainter extends CustomPainter {
       _drawLine(canvas, element, paint);
     } else if (element is DrawingText) {
       _drawText(canvas, element);
+    } else if (element is DrawingImage) {
+      _drawImage(canvas, element);
     }
   }
 
@@ -113,6 +117,54 @@ class DrawingCanvasPainter extends CustomPainter {
     );
     
     textPainter.paint(canvas, offset);
+  }
+
+  void _drawImage(Canvas canvas, DrawingImage imageElement) {
+    try {
+      // Decode base64 image
+      final bytes = base64Decode(imageElement.imageData);
+      final codec = ui.instantiateImageCodec(bytes);
+      
+      // Note: This is synchronous decoding which may cause performance issues
+      // For production, consider using a FutureBuilder or caching decoded images
+      codec.then((codec) {
+        codec.getNextFrame().then((frameInfo) {
+          final image = frameInfo.image;
+          
+          // Draw image at position with specified size
+          final srcRect = Rect.fromLTWH(
+            0,
+            0,
+            image.width.toDouble(),
+            image.height.toDouble(),
+          );
+          
+          final dstRect = Rect.fromLTWH(
+            imageElement.position.dx,
+            imageElement.position.dy,
+            imageElement.width,
+            imageElement.height,
+          );
+          
+          canvas.drawImageRect(image, srcRect, dstRect, Paint());
+        });
+      });
+    } catch (e) {
+      // If image fails to decode, draw a placeholder
+      final paint = Paint()
+        ..color = Colors.grey.withOpacity(0.3)
+        ..style = PaintingStyle.fill;
+      
+      canvas.drawRect(
+        Rect.fromLTWH(
+          imageElement.position.dx,
+          imageElement.position.dy,
+          imageElement.width,
+          imageElement.height,
+        ),
+        paint,
+      );
+    }
   }
 
   @override

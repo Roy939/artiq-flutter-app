@@ -75,6 +75,12 @@ class DrawingToolbar extends StatelessWidget {
                 tool: DrawingTool.text,
                 label: 'Text',
               ),
+              _buildToolButton(
+                context,
+                icon: Icons.image,
+                tool: DrawingTool.image,
+                label: 'Image',
+              ),
             ],
           ),
           const SizedBox(height: 12),

@@ -32,6 +32,8 @@ abstract class DrawingElement {
         return DrawingLine.fromJson(json);
       case 'text':
         return DrawingText.fromJson(json);
+      case 'image':
+        return DrawingImage.fromJson(json);
       default:
         throw Exception('Unknown drawing element type: $type');
     }
@@ -266,6 +268,56 @@ class DrawingText extends DrawingElement {
   }
 }
 
+/// Represents an uploaded image on the canvas
+class DrawingImage extends DrawingElement {
+  final String imageData; // Base64 encoded image
+  final Offset position;
+  final double width;
+  final double height;
+
+  DrawingImage({
+    required super.id,
+    required super.color,
+    required super.strokeWidth,
+    required super.createdAt,
+    required this.imageData,
+    required this.position,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'image',
+      'id': id,
+      'color': color.value,
+      'strokeWidth': strokeWidth,
+      'createdAt': createdAt.toIso8601String(),
+      'imageData': imageData,
+      'position': {'x': position.dx, 'y': position.dy},
+      'width': width,
+      'height': height,
+    };
+  }
+
+  factory DrawingImage.fromJson(Map<String, dynamic> json) {
+    return DrawingImage(
+      id: json['id'] as String,
+      color: Color(json['color'] as int),
+      strokeWidth: (json['strokeWidth'] as num).toDouble(),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      imageData: json['imageData'] as String,
+      position: Offset(
+        (json['position']['x'] as num).toDouble(),
+        (json['position']['y'] as num).toDouble(),
+      ),
+      width: (json['width'] as num).toDouble(),
+      height: (json['height'] as num).toDouble(),
+    );
+  }
+}
+
 /// Drawing tool types
 enum DrawingTool {
   pen,
@@ -273,6 +325,7 @@ enum DrawingTool {
   circle,
   line,
   text,
+  image,
   eraser,
   select,
 }
