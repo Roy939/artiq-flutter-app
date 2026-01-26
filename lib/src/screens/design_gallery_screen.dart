@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../utils/responsive_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:artiq_flutter/src/data/designs_provider.dart';
+import 'package:artiq_flutter/src/providers/subscription_provider.dart';
+import 'package:artiq_flutter/src/screens/subscription_screen.dart';
 import 'package:artiq_flutter/src/models/design.dart';
 import 'package:artiq_flutter/src/services/sync_service.dart';
 import 'package:artiq_flutter/src/services/auth_service.dart';
@@ -171,11 +174,27 @@ class DesignGalleryScreen extends ConsumerWidget {
               child: Icon(Icons.person, color: Colors.white),
             ),
             onSelected: (value) async {
-              if (value == 'logout') {
+              if (value == 'subscription') {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const SubscriptionScreen(),
+                  ),
+                );
+              } else if (value == 'logout') {
                 await ref.read(authServiceProvider).signOut();
               }
             },
             itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'subscription',
+                child: Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.blue),
+                    SizedBox(width: 12),
+                    Text('Subscription'),
+                  ],
+                ),
+              ),
               const PopupMenuItem(
                 value: 'account',
                 child: Row(

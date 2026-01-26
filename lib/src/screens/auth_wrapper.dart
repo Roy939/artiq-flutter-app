@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:artiq_flutter/src/screens/login_screen.dart';
 import 'package:artiq_flutter/src/screens/home_screen.dart';
+import 'package:artiq_flutter/src/providers/subscription_provider.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({Key? key}) : super(key: key);
@@ -19,6 +21,11 @@ class AuthWrapper extends StatelessWidget {
           );
         }
         if (snapshot.hasData) {
+          // Load subscription when user is logged in
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<SubscriptionProvider>(context, listen: false)
+                .loadSubscription(snapshot.data!.uid);
+          });
           return const HomeScreen();
         } else {
           return const LoginScreen();

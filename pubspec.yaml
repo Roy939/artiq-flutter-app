@@ -15,10 +15,12 @@ dependencies:
   # Firebase
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
   google_sign_in: ^6.2.1
 
   # State Management
   flutter_riverpod: ^2.4.9
+  provider: ^6.1.1
 
   # Local Storage
   shared_preferences: ^2.2.2
@@ -28,6 +30,7 @@ dependencies:
 
   # Networking
   http: ^1.1.0
+  url_launcher: ^6.2.4
 
   # Unique IDs
   uuid: ^4.3.3

@@ -2,6 +2,7 @@ import 'dart:convert';
 import '../utils/responsive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:artiq_flutter/src/data/designs_provider.dart';
 import 'package:artiq_flutter/src/models/design.dart';
@@ -10,6 +11,8 @@ import 'package:artiq_flutter/src/models/template.dart';
 import 'package:artiq_flutter/src/widgets/drawing_canvas.dart';
 import 'package:artiq_flutter/src/widgets/drawing_toolbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:artiq_flutter/src/providers/subscription_provider.dart';
+import 'package:artiq_flutter/src/models/subscription.dart';
 
 class CreateDesignScreen extends ConsumerStatefulWidget {
   final DesignTemplate? templateToUse;
@@ -123,6 +126,10 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
   }
 
   void _showExportDialog() {
+    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+    final tier = subscriptionProvider.currentTier;
+    final isFree = tier == SubscriptionTier.free;
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -130,31 +137,65 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (isFree)
+              Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  border: Border.all(color: Colors.orange),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info, color: Colors.orange, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Free tier exports include watermark. Upgrade to Pro for watermark-free exports!',
+                        style: TextStyle(fontSize: 12, color: Colors.orange[700]),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const Text('Choose export format:'),
             const SizedBox(height: 16),
             ListTile(
               leading: const Icon(Icons.image, color: Colors.blue),
               title: const Text('PNG'),
-              subtitle: const Text('High quality, transparent background'),
+              subtitle: Text(isFree ? 'High quality (with watermark)' : 'High quality, transparent background'),
               onTap: () {
                 Navigator.pop(context);
                 _exportAs('png');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.image, color: Colors.green),
-              title: const Text('JPG'),
+              leading: Icon(Icons.image, color: isFree ? Colors.grey : Colors.green),
+              title: Row(
+                children: [
+                  const Text('JPG'),
+                  if (isFree) ...[const SizedBox(width: 8), const Icon(Icons.lock, size: 16, color: Colors.grey)],
+                ],
+              ),
               subtitle: const Text('Smaller file size, white background'),
-              onTap: () {
+              enabled: !isFree,
+              onTap: isFree ? null : () {
                 Navigator.pop(context);
                 _exportAs('jpg');
               },
             ),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-              title: const Text('PDF'),
+              leading: Icon(Icons.picture_as_pdf, color: isFree ? Colors.grey : Colors.red),
+              title: Row(
+                children: [
+                  const Text('PDF'),
+                  if (isFree) ...[const SizedBox(width: 8), const Icon(Icons.lock, size: 16, color: Colors.grey)],
+                ],
+              ),
               subtitle: const Text('Document format, printable'),
-              onTap: () {
+              enabled: !isFree,
+              onTap: isFree ? null : () {
                 Navigator.pop(context);
                 _exportAs('pdf');
               },
@@ -162,6 +203,16 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
           ],
         ),
         actions: [
+          if (isFree)
+            TextButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                subscriptionProvider.openCheckout(context);
+              },
+              icon: const Icon(Icons.star, color: Colors.blue),
+              label: const Text('Upgrade to Pro'),
+              style: TextButton.styleFrom(foregroundColor: Colors.blue),
+            ),
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel'),
