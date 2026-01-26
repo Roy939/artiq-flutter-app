@@ -2,7 +2,7 @@ import 'dart:convert';
 import '../utils/responsive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:uuid/uuid.dart';
 import 'package:artiq_flutter/src/data/designs_provider.dart';
 import 'package:artiq_flutter/src/models/design.dart';
@@ -12,7 +12,7 @@ import 'package:artiq_flutter/src/widgets/drawing_canvas.dart';
 import 'package:artiq_flutter/src/widgets/drawing_toolbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:artiq_flutter/src/providers/subscription_provider.dart';
-import 'package:artiq_flutter/src/models/subscription.dart';
+import 'package:artiq_flutter/src/models/subscription_model.dart';
 
 class CreateDesignScreen extends ConsumerStatefulWidget {
   final DesignTemplate? templateToUse;
@@ -126,7 +126,7 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
   }
 
   void _showExportDialog() {
-    final subscriptionProvider = Provider.of<SubscriptionProvider>(context, listen: false);
+    final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
     final tier = subscriptionProvider.currentTier;
     final isFree = tier == SubscriptionTier.free;
     

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:artiq_flutter/src/screens/auth_wrapper.dart';
 import 'package:artiq_flutter/src/providers/subscription_provider.dart';
 import 'firebase_options.dart';
@@ -24,9 +24,9 @@ void main() async {
   }
   runApp(
     ProviderScope(
-      child: MultiProvider(
+      child: provider.MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
+          provider.ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
         ],
         child: const MyApp(),
       ),

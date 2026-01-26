@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import '../providers/subscription_provider.dart';
 import '../models/subscription_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,7 +14,7 @@ class SubscriptionScreen extends StatelessWidget {
         title: const Text('Subscription'),
         backgroundColor: Colors.black,
       ),
-      body: Consumer<SubscriptionProvider>(
+      body: provider.Consumer<SubscriptionProvider>(
         builder: (context, subscriptionProvider, child) {
           if (subscriptionProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
