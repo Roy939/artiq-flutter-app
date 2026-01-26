@@ -46,6 +46,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
     _currentStrokePoints = [localPosition];
 
     final tool = widget.canvasState.currentTool;
+    print('[ARTIQ DEBUG] Tool selected: $tool at position $localPosition');
 
     if (tool == DrawingTool.text) {
       // Show dialog to enter text

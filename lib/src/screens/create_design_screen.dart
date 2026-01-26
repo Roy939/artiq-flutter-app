@@ -31,11 +31,14 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
     super.initState();
     // Initialize canvas with template elements if template is provided
     if (widget.templateToUse != null) {
+      print('[ARTIQ DEBUG] Loading template: ${widget.templateToUse!.name}');
+      print('[ARTIQ DEBUG] Template has ${widget.templateToUse!.elements.length} elements');
       _canvasState = CanvasState(
         elements: List.from(widget.templateToUse!.elements),
       );
       // Set default title from template name
       _titleController.text = widget.templateToUse!.name;
+      print('[ARTIQ DEBUG] Canvas initialized with ${_canvasState.elements.length} elements');
     }
   }
 
