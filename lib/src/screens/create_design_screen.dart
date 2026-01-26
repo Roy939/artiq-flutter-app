@@ -13,8 +13,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateDesignScreen extends ConsumerStatefulWidget {
   final DesignTemplate? templateToUse;
+  final Design? existingDesign;
   
-  const CreateDesignScreen({Key? key, this.templateToUse}) : super(key: key);
+  const CreateDesignScreen({Key? key, this.templateToUse, this.existingDesign}) : super(key: key);
 
   @override
   _CreateDesignScreenState createState() => _CreateDesignScreenState();
@@ -29,8 +30,20 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
   @override
   void initState() {
     super.initState();
+    
+    // Initialize canvas with existing design if provided
+    if (widget.existingDesign != null) {
+      print('[ARTIQ DEBUG] Loading existing design: ${widget.existingDesign!.title}');
+      try {
+        _canvasState = CanvasState.fromJson(jsonDecode(widget.existingDesign!.content));
+        _titleController.text = widget.existingDesign!.title;
+        print('[ARTIQ DEBUG] Design loaded with ${_canvasState.elements.length} elements');
+      } catch (e) {
+        print('[ARTIQ ERROR] Failed to load design: $e');
+      }
+    }
     // Initialize canvas with template elements if template is provided
-    if (widget.templateToUse != null) {
+    else if (widget.templateToUse != null) {
       print('[ARTIQ DEBUG] Loading template: ${widget.templateToUse!.name}');
       print('[ARTIQ DEBUG] Template has ${widget.templateToUse!.elements.length} elements');
       _canvasState = CanvasState(

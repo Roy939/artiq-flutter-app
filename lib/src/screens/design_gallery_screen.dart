@@ -240,10 +240,11 @@ class DesignGalleryScreen extends ConsumerWidget {
       ),
       child: InkWell(
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Opening "${design.title}"...'),
-              duration: const Duration(seconds: 1),
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => CreateDesignScreen(
+                existingDesign: design,
+              ),
             ),
           );
         },
