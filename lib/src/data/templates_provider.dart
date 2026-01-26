@@ -34,6 +34,7 @@ final templatesProvider = Provider<List<DesignTemplate>>((ref) {
           createdAt: DateTime.now(),
           topLeft: const Offset(0, 0),
           bottomRight: const Offset(1080, 1080),
+          filled: true,
         ),
         // Title placeholder
         DrawingText(
@@ -75,6 +76,7 @@ final templatesProvider = Provider<List<DesignTemplate>>((ref) {
           createdAt: DateTime.now(),
           topLeft: const Offset(0, 0),
           bottomRight: const Offset(1080, 1920),
+          filled: true,
         ),
         // Main text
         DrawingText(
@@ -106,6 +108,7 @@ final templatesProvider = Provider<List<DesignTemplate>>((ref) {
           createdAt: DateTime.now(),
           topLeft: const Offset(0, 0),
           bottomRight: const Offset(820, 312),
+          filled: true,
         ),
         // Page name
         DrawingText(
@@ -137,6 +140,7 @@ final templatesProvider = Provider<List<DesignTemplate>>((ref) {
           createdAt: DateTime.now(),
           topLeft: const Offset(0, 0),
           bottomRight: const Offset(816, 1056),
+          filled: true,
         ),
         // Header rectangle
         DrawingRectangle(
@@ -146,6 +150,7 @@ final templatesProvider = Provider<List<DesignTemplate>>((ref) {
           createdAt: DateTime.now(),
           topLeft: const Offset(0, 0),
           bottomRight: const Offset(816, 200),
+          filled: true,
         ),
         // Title
         DrawingText(
