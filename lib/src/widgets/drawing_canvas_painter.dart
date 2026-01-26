@@ -90,6 +90,7 @@ class DrawingCanvasPainter extends CustomPainter {
     final textStyle = TextStyle(
       color: textElement.color,
       fontSize: textElement.fontSize,
+      fontWeight: FontWeight.bold,
     );
 
     final textSpan = TextSpan(
@@ -100,10 +101,18 @@ class DrawingCanvasPainter extends CustomPainter {
     final textPainter = TextPainter(
       text: textSpan,
       textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
     );
 
     textPainter.layout();
-    textPainter.paint(canvas, textElement.position);
+    
+    // Center the text at the specified position
+    final offset = Offset(
+      textElement.position.dx - (textPainter.width / 2),
+      textElement.position.dy - (textPainter.height / 2),
+    );
+    
+    textPainter.paint(canvas, offset);
   }
 
   @override
