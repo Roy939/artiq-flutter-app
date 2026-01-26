@@ -95,6 +95,7 @@ class DrawingCanvasPainter extends CustomPainter {
       color: textElement.color,
       fontSize: textElement.fontSize,
       fontWeight: FontWeight.bold,
+      fontFamily: textElement.fontFamily,
     );
 
     final textSpan = TextSpan(

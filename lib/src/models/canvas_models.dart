@@ -227,6 +227,7 @@ class DrawingText extends DrawingElement {
   final String text;
   final Offset position;
   final double fontSize;
+  final String fontFamily;
 
   DrawingText({
     required super.id,
@@ -236,6 +237,7 @@ class DrawingText extends DrawingElement {
     required this.text,
     required this.position,
     this.fontSize = 24.0,
+    this.fontFamily = 'Roboto',
   });
 
   @override
@@ -249,6 +251,7 @@ class DrawingText extends DrawingElement {
       'text': text,
       'position': {'x': position.dx, 'y': position.dy},
       'fontSize': fontSize,
+      'fontFamily': fontFamily,
     };
   }
 
@@ -264,6 +267,7 @@ class DrawingText extends DrawingElement {
         (json['position']['y'] as num).toDouble(),
       ),
       fontSize: (json['fontSize'] as num?)?.toDouble() ?? 24.0,
+      fontFamily: json['fontFamily'] as String? ?? 'Roboto',
     );
   }
 }
@@ -336,6 +340,7 @@ class CanvasState {
   final DrawingTool currentTool;
   final Color currentColor;
   final double currentStrokeWidth;
+  final String currentFontFamily;
   final DrawingElement? tempElement; // Element being drawn
   final double zoomLevel; // Canvas zoom level (1.0 = 100%)
   final Offset panOffset; // Canvas pan offset for scrolling
@@ -345,6 +350,7 @@ class CanvasState {
     this.currentTool = DrawingTool.pen,
     this.currentColor = Colors.black,
     this.currentStrokeWidth = 3.0,
+    this.currentFontFamily = 'Roboto',
     this.tempElement,
     this.zoomLevel = 1.0,
     this.panOffset = Offset.zero,
@@ -355,6 +361,7 @@ class CanvasState {
     DrawingTool? currentTool,
     Color? currentColor,
     double? currentStrokeWidth,
+    String? currentFontFamily,
     DrawingElement? tempElement,
     double? zoomLevel,
     Offset? panOffset,
@@ -365,6 +372,7 @@ class CanvasState {
       currentTool: currentTool ?? this.currentTool,
       currentColor: currentColor ?? this.currentColor,
       currentStrokeWidth: currentStrokeWidth ?? this.currentStrokeWidth,
+      currentFontFamily: currentFontFamily ?? this.currentFontFamily,
       tempElement: clearTemp ? null : (tempElement ?? this.tempElement),
       zoomLevel: zoomLevel ?? this.zoomLevel,
       panOffset: panOffset ?? this.panOffset,

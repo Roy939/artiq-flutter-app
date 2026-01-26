@@ -260,6 +260,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
                   text: text,
                   position: position,
                   fontSize: 24.0,
+                  fontFamily: widget.canvasState.currentFontFamily,
                 );
                 
                 final newElements = [

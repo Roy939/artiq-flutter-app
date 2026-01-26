@@ -124,6 +124,37 @@ class DrawingToolbar extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: 16),
+              // Font selector
+              if (canvasState.currentTool == DrawingTool.text)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DropdownButton<String>(
+                    value: canvasState.currentFontFamily,
+                    underline: const SizedBox(),
+                    items: const [
+                      DropdownMenuItem(value: 'Roboto', child: Text('Roboto')),
+                      DropdownMenuItem(value: 'Arial', child: Text('Arial')),
+                      DropdownMenuItem(value: 'Times New Roman', child: Text('Times New Roman')),
+                      DropdownMenuItem(value: 'Courier New', child: Text('Courier New')),
+                      DropdownMenuItem(value: 'Georgia', child: Text('Georgia')),
+                      DropdownMenuItem(value: 'Verdana', child: Text('Verdana')),
+                      DropdownMenuItem(value: 'Comic Sans MS', child: Text('Comic Sans MS')),
+                      DropdownMenuItem(value: 'Impact', child: Text('Impact')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        onStateChanged(
+                          canvasState.copyWith(currentFontFamily: value),
+                        );
+                      }
+                    },
+                  ),
+                ),
               const SizedBox(width: 8),
               // Undo/Redo/Clear
               IconButton(
