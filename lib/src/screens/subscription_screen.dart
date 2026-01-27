@@ -4,8 +4,24 @@ import '../providers/subscription_provider.dart';
 import '../models/subscription_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SubscriptionScreen extends StatelessWidget {
+class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
+}
+
+class _SubscriptionScreenState extends State<SubscriptionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Refresh subscription status when page loads
+    // This ensures we get the latest status after returning from Stripe Checkout
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
+      subscriptionProvider.loadSubscription();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
