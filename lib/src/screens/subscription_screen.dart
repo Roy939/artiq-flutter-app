@@ -130,14 +130,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 8),
-              _buildSubscriptionDetail(
-                icon: Icons.calendar_today,
-                label: 'Started',
-                value: subscription.subscriptionStart != null
-                    ? _formatDate(subscription.subscriptionStart!)
-                    : 'N/A',
-              ),
-              const SizedBox(height: 8),
+              // Only show start date if it exists
+              if (subscription.subscriptionStart != null) ...[
+                _buildSubscriptionDetail(
+                  icon: Icons.calendar_today,
+                  label: 'Started',
+                  value: _formatDate(subscription.subscriptionStart!),
+                ),
+                const SizedBox(height: 8),
+              ],
               _buildSubscriptionDetail(
                 icon: Icons.credit_card,
                 label: 'Status',
