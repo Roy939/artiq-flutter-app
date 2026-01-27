@@ -10,6 +10,9 @@ on:
       - 'pubspec.yaml'
       - '.github/workflows/deploy-flutter-web.yml'
 
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
