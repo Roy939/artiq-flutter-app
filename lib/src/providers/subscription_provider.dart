@@ -194,3 +194,132 @@ class SubscriptionProvider with ChangeNotifier {
     );
   }
 }
+
+
+  Future<void> cancelSubscription(BuildContext context) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      _showError(context, 'Please log in to cancel subscription');
+      return;
+    }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Get Firebase ID token for authentication
+      final idToken = await user.getIdToken();
+      
+      // Call Firebase Cloud Function to cancel subscription
+      final response = await http.post(
+        Uri.parse('https://us-central1-artiq-1ebb2.cloudfunctions.net/cancelSubscription'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+      );
+
+      // Close loading dialog
+      if (context.mounted) Navigator.pop(context);
+
+      if (response.statusCode == 200) {
+        // Reload subscription to get updated status
+        await loadSubscription();
+        
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Subscription Canceled'),
+              content: const Text('Your subscription has been canceled. You will retain Pro access until the end of your billing period.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          _showError(context, 'Failed to cancel subscription: ${response.body}');
+        }
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (context.mounted) Navigator.pop(context);
+      
+      if (context.mounted) {
+        _showError(context, 'Error: $e');
+      }
+      debugPrint('[ARTIQ ERROR] Failed to cancel subscription: $e');
+    }
+  }
+
+  Future<void> openCustomerPortal(BuildContext context) async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      _showError(context, 'Please log in to manage billing');
+      return;
+    }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Get Firebase ID token for authentication
+      final idToken = await user.getIdToken();
+      
+      // Call Firebase Cloud Function to create Customer Portal Session
+      final response = await http.post(
+        Uri.parse('https://us-central1-artiq-1ebb2.cloudfunctions.net/createCustomerPortalSession'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
+      );
+
+      // Close loading dialog
+      if (context.mounted) Navigator.pop(context);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final portalUrl = data['url'];
+        
+        // Open Stripe Customer Portal in browser
+        final uri = Uri.parse(portalUrl);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          if (context.mounted) {
+            _showError(context, 'Could not open customer portal');
+          }
+        }
+      } else {
+        if (context.mounted) {
+          _showError(context, 'Failed to open customer portal: ${response.body}');
+        }
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (context.mounted) Navigator.pop(context);
+      
+      if (context.mounted) {
+        _showError(context, 'Error: $e');
+      }
+      debugPrint('[ARTIQ ERROR] Failed to open customer portal: $e');
+    }
+  }

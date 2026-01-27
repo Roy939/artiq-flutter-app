@@ -94,6 +94,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Widget _buildCurrentPlanCard(bool isPro) {
+    final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
+    final subscription = subscriptionProvider.subscription;
+    
     return Card(
       color: isPro ? Colors.blue.shade50 : Colors.grey.shade100,
       child: Padding(
@@ -121,10 +124,92 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 color: Colors.grey.shade600,
               ),
             ),
+            
+            // Show subscription details for Pro users
+            if (isPro && subscription != null) ..[
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 8),
+              _buildSubscriptionDetail(
+                icon: Icons.calendar_today,
+                label: 'Started',
+                value: subscription.subscriptionStart != null
+                    ? _formatDate(subscription.subscriptionStart!)
+                    : 'N/A',
+              ),
+              const SizedBox(height: 8),
+              _buildSubscriptionDetail(
+                icon: Icons.credit_card,
+                label: 'Status',
+                value: subscription.isActive ? 'Active' : 'Inactive',
+              ),
+              const SizedBox(height: 16),
+              
+              // Management buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _openCustomerPortal(context),
+                      icon: const Icon(Icons.settings),
+                      label: const Text('Manage Billing'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _confirmCancelSubscription(context),
+                      icon: const Icon(Icons.cancel),
+                      label: const Text('Cancel'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
     );
+  }
+  
+  Widget _buildSubscriptionDetail({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey.shade600),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 14,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
+  }
+  
+  String _formatDate(DateTime date) {
+    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
   Widget _buildPlanCard(
@@ -258,3 +343,37 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     await subscriptionProvider.openCheckout(context);
   }
 }
+
+
+  Future<void> _openCustomerPortal(BuildContext context) async {
+    final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
+    await subscriptionProvider.openCustomerPortal(context);
+  }
+
+  Future<void> _confirmCancelSubscription(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cancel Subscription?'),
+        content: const Text(
+          'Are you sure you want to cancel your Pro subscription? You will retain access until the end of your current billing period.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep Subscription'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Cancel Subscription'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
+      await subscriptionProvider.cancelSubscription(context);
+    }
+  }
