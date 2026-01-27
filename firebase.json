@@ -2,6 +2,7 @@
   "functions": {
     "source": "functions",
     "runtime": "nodejs20",
+    "dotenv": "functions/.env.yaml",
     "ignore": [
       "node_modules",
       ".git",

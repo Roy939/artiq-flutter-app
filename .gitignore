@@ -126,3 +126,5 @@ build/
 # Linux related
 **/linux/flutter/generated_plugin_registrant.cc
 **/linux/flutter/generated_plugin_registrant.h
+functions/.env
+functions/.env.yaml
