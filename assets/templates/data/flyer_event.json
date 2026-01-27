@@ -1,0 +1,16 @@
+{
+  "id": "flyer_event",
+  "name": "Event Promotion",
+  "category": "Marketing",
+  "size": {"width": 816, "height": 1056},
+  "thumbnail": "assets/templates/flyer_event.png",
+  "elements": [
+    {"type": "rectangle", "id": "header_bg", "color": 4291559423, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 816, "y": 250}, "filled": true},
+    {"type": "text", "id": "title", "color": 4294967295, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "text": "SUMMER FESTIVAL\n2026", "position": {"x": 408, "y": 125}, "fontSize": 56, "fontFamily": "Roboto"},
+    {"type": "text", "id": "date", "color": 4278190080, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "DATE: July 15, 2026", "position": {"x": 408, "y": 350}, "fontSize": 28, "fontFamily": "Roboto"},
+    {"type": "text", "id": "time", "color": 4278190080, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "TIME: 2:00 PM - 10:00 PM", "position": {"x": 408, "y": 400}, "fontSize": 28, "fontFamily": "Roboto"},
+    {"type": "text", "id": "location", "color": 4278190080, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "LOCATION: Central Park", "position": {"x": 408, "y": 450}, "fontSize": 28, "fontFamily": "Roboto"},
+    {"type": "rectangle", "id": "cta_bg", "color": 4291559423, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 50, "y": 900}, "bottomRight": {"x": 766, "y": 1000}, "filled": true},
+    {"type": "text", "id": "cta", "color": 4294967295, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "text": "GET YOUR TICKETS NOW!", "position": {"x": 408, "y": 950}, "fontSize": 40, "fontFamily": "Roboto"}
+  ]
+}

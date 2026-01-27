@@ -1,5 +1,6 @@
 import 'dart:convert';
 import '../utils/responsive_layout.dart';
+import '../utils/export_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as provider;
@@ -222,10 +223,13 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
     );
   }
 
+  final GlobalKey _canvasKey = GlobalKey();
+
   Future<void> _exportAs(String format) async {
     try {
-      // For web: Create a download link
-      // For mobile/desktop: Use path_provider and save to gallery
+      final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
+      final isFree = subscriptionProvider.currentTier == SubscriptionTier.free;
+      final filename = _titleController.text.isEmpty ? 'artiq_design' : _titleController.text;
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -234,15 +238,25 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
         ),
       );
       
-      // TODO: Implement actual export using screenshot package or render to image
-      // For now, show instructions
-      await Future.delayed(const Duration(seconds: 1));
+      if (format == 'png') {
+        await ExportUtil.exportToPNG(
+          canvasKey: _canvasKey,
+          filename: filename,
+          addWatermark: isFree,
+        );
+      } else if (format == 'jpg') {
+        await ExportUtil.exportToJPG(
+          canvasKey: _canvasKey,
+          filename: filename,
+        );
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Right-click on canvas and "Save image as..." to export as $format'),
-            duration: const Duration(seconds: 4),
+            content: Text('✓ Exported as $format successfully!'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -352,9 +366,12 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: DrawingCanvas(
-                      canvasState: _canvasState,
-                      onStateChanged: _updateCanvasState,
+                    child: RepaintBoundary(
+                      key: _canvasKey,
+                      child: DrawingCanvas(
+                        canvasState: _canvasState,
+                        onStateChanged: _updateCanvasState,
+                      ),
                     ),
                   ),
                 ),

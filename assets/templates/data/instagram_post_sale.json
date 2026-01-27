@@ -1,0 +1,13 @@
+{
+  "id": "instagram_post_sale",
+  "name": "Flash Sale",
+  "category": "Marketing",
+  "size": {"width": 1080, "height": 1080},
+  "thumbnail": "assets/templates/instagram_post_sale.png",
+  "elements": [
+    {"type": "rectangle", "id": "bg", "color": 4294198070, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 1080, "y": 1080}, "filled": true},
+    {"type": "text", "id": "header", "color": 4294967040, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "text": "FLASH SALE", "position": {"x": 540, "y": 250}, "fontSize": 56, "fontFamily": "Roboto"},
+    {"type": "text", "id": "main", "color": 4294967295, "strokeWidth": 4, "createdAt": "2026-01-27T00:00:00.000Z", "text": "50% OFF", "position": {"x": 540, "y": 540}, "fontSize": 96, "fontFamily": "Roboto"},
+    {"type": "text", "id": "footer", "color": 4294967040, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "LIMITED TIME ONLY", "position": {"x": 540, "y": 780}, "fontSize": 40, "fontFamily": "Roboto"}
+  ]
+}

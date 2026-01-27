@@ -1,0 +1,13 @@
+{
+  "id": "youtube_thumbnail_tutorial",
+  "name": "Tutorial Thumbnail",
+  "category": "Video",
+  "size": {"width": 1280, "height": 720},
+  "thumbnail": "assets/templates/youtube_thumbnail_tutorial.png",
+  "elements": [
+    {"type": "rectangle", "id": "bg", "color": 4278190335, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 1280, "y": 720}, "filled": true},
+    {"type": "text", "id": "header", "color": 4294967295, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "text": "HOW TO", "position": {"x": 900, "y": 150}, "fontSize": 40, "fontFamily": "Roboto"},
+    {"type": "text", "id": "main", "color": 4294967040, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "text": "YOUR TITLE\nHERE", "position": {"x": 900, "y": 400}, "fontSize": 72, "fontFamily": "Roboto"},
+    {"type": "circle", "id": "play_button", "color": 4294901760, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "center": {"x": 1150, "y": 600}, "radius": 50, "filled": true}
+  ]
+}
