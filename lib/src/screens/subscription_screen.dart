@@ -238,23 +238,7 @@ class SubscriptionScreen extends StatelessWidget {
   }
 
   Future<void> _upgradeToPro(BuildContext context) async {
-    // For now, show a message that Stripe checkout will be implemented
-    // In production, this would open Stripe Checkout
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Upgrade to Pro'),
-        content: const Text(
-          'Stripe checkout integration is being set up. '
-          'You will be redirected to a secure payment page to complete your subscription.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+    final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
+    await subscriptionProvider.openCheckout(context);
   }
 }
