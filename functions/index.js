@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const stripeLib = require('stripe');
 const cors = require('cors')({ origin: true });
+const express = require('express');
 
 admin.initializeApp();
 
@@ -60,8 +61,10 @@ exports.createCheckoutSession = functions.https.onRequest((req, res) => {
 /**
  * Stripe Webhook Handler
  * Processes Stripe events (payment success, subscription updates, etc.)
+ * Using Express with raw body parser to properly handle Stripe webhooks
  */
-exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
+const webhookApp = express();
+webhookApp.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -69,9 +72,17 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 
   try {
     const stripe = getStripe();
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+    
+    // req.body is now a Buffer thanks to express.raw()
+    console.log('Webhook received - Body is Buffer:', Buffer.isBuffer(req.body));
+    console.log('Webhook secret:', webhookSecret ? 'Set' : 'Not set');
+    console.log('Signature present:', !!sig);
+    
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    console.log('Webhook signature verified successfully for event:', event.type);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
+    console.error('Error details:', err);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -160,6 +171,9 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Export the Express app as a Cloud Function
+exports.stripeWebhook = functions.https.onRequest(webhookApp);
 
 /**
  * Get Subscription Status
