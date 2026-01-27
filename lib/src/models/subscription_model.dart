@@ -39,13 +39,25 @@ class UserSubscription {
       stripeCustomerId: json['stripeCustomerId'] as String?,
       stripeSubscriptionId: json['stripeSubscriptionId'] as String?,
       subscriptionStart: json['subscriptionStart'] != null
-          ? DateTime.parse(json['subscriptionStart'] as String)
+          ? _parseDateTime(json['subscriptionStart'])
           : null,
       subscriptionEnd: json['subscriptionEnd'] != null
-          ? DateTime.parse(json['subscriptionEnd'] as String)
+          ? _parseDateTime(json['subscriptionEnd'])
           : null,
       isActive: json['isActive'] as bool? ?? false,
     );
+  }
+
+  // Helper method to parse DateTime from both Firestore Timestamp and ISO8601 String
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.parse(value);
+    // Handle Firestore Timestamp
+    if (value.runtimeType.toString() == 'Timestamp') {
+      return (value as dynamic).toDate() as DateTime;
+    }
+    return null;
   }
 
   Map<String, dynamic> toJson() {
