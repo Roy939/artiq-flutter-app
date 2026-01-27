@@ -63,8 +63,10 @@ exports.createCheckoutSession = functions.https.onRequest((req, res) => {
  * Processes Stripe events (payment success, subscription updates, etc.)
  * Using Express with raw body parser to properly handle Stripe webhooks
  */
+// Create Express app with raw body parser for ALL routes
 const webhookApp = express();
-webhookApp.post('/', express.raw({ type: 'application/json' }), async (req, res) => {
+webhookApp.use(express.raw({ type: '*/*' }));
+webhookApp.post('/', async (req, res) => {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -78,7 +80,9 @@ webhookApp.post('/', express.raw({ type: 'application/json' }), async (req, res)
     console.log('Webhook secret:', webhookSecret ? 'Set' : 'Not set');
     console.log('Signature present:', !!sig);
     
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    // Convert Buffer to string for Stripe signature verification
+    const payload = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : req.body;
+    event = stripe.webhooks.constructEvent(payload, sig, webhookSecret);
     console.log('Webhook signature verified successfully for event:', event.type);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
@@ -94,19 +98,19 @@ webhookApp.post('/', express.raw({ type: 'application/json' }), async (req, res)
         const userId = session.client_reference_id || session.metadata.userId;
 
         if (userId) {
-          await admin.firestore().collection('users').doc(userId).set(
+          await admin.firestore().collection('subscriptions').doc(userId).set(
             {
-              subscription: {
-                tier: 'pro',
-                stripeCustomerId: session.customer,
-                stripeSubscriptionId: session.subscription,
-                status: 'active',
-                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-              },
+              userId: userId,
+              tier: 'pro',
+              stripeCustomerId: session.customer,
+              stripeSubscriptionId: session.subscription,
+              isActive: true,
+              subscriptionStart: admin.firestore.FieldValue.serverTimestamp(),
+              subscriptionEnd: null,
             },
             { merge: true }
           );
-          console.log(`User ${userId} upgraded to Pro`);
+          console.log(`User ${userId} upgraded to Pro in subscriptions collection`);
         }
         break;
 
@@ -114,18 +118,18 @@ webhookApp.post('/', express.raw({ type: 'application/json' }), async (req, res)
         const subscription = event.data.object;
         const customerId = subscription.customer;
 
-        // Find user by customer ID
-        const usersSnapshot = await admin
+        // Find subscription by customer ID
+        const subsSnapshot = await admin
           .firestore()
-          .collection('users')
-          .where('subscription.stripeCustomerId', '==', customerId)
+          .collection('subscriptions')
+          .where('stripeCustomerId', '==', customerId)
           .get();
 
-        if (!usersSnapshot.empty) {
-          const userDoc = usersSnapshot.docs[0];
-          await userDoc.ref.update({
-            'subscription.status': subscription.status,
-            'subscription.updatedAt': admin.firestore.FieldValue.serverTimestamp(),
+        if (!subsSnapshot.empty) {
+          const subDoc = subsSnapshot.docs[0];
+          await subDoc.ref.update({
+            isActive: subscription.status === 'active',
+            subscriptionEnd: subscription.status === 'canceled' ? admin.firestore.FieldValue.serverTimestamp() : null,
           });
           console.log(`Subscription updated for customer ${customerId}`);
         }
@@ -135,19 +139,19 @@ webhookApp.post('/', express.raw({ type: 'application/json' }), async (req, res)
         const deletedSub = event.data.object;
         const deletedCustomerId = deletedSub.customer;
 
-        // Find user and downgrade to free
-        const deletedUsersSnapshot = await admin
+        // Find subscription and downgrade to free
+        const deletedSubsSnapshot = await admin
           .firestore()
-          .collection('users')
-          .where('subscription.stripeCustomerId', '==', deletedCustomerId)
+          .collection('subscriptions')
+          .where('stripeCustomerId', '==', deletedCustomerId)
           .get();
 
-        if (!deletedUsersSnapshot.empty) {
-          const userDoc = deletedUsersSnapshot.docs[0];
-          await userDoc.ref.update({
-            'subscription.tier': 'free',
-            'subscription.status': 'canceled',
-            'subscription.updatedAt': admin.firestore.FieldValue.serverTimestamp(),
+        if (!deletedSubsSnapshot.empty) {
+          const subDoc = deletedSubsSnapshot.docs[0];
+          await subDoc.ref.update({
+            tier: 'free',
+            isActive: false,
+            subscriptionEnd: admin.firestore.FieldValue.serverTimestamp(),
           });
           console.log(`User downgraded to free for customer ${deletedCustomerId}`);
         }

@@ -27,10 +27,12 @@ class SubscriptionProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      // Force fetch from server to get latest subscription status
+      // This is critical for Flutter Web to bypass offline cache after payment
       final doc = await _firestore
           .collection('subscriptions')
           .doc(user.uid)
-          .get();
+          .get(const GetOptions(source: Source.server));
 
       if (doc.exists) {
         _subscription = UserSubscription.fromJson(doc.data()!);
