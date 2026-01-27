@@ -16,10 +16,8 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final categories = ['All', ...ref.watch(templateCategoriesProvider)];
-    final templates = _selectedCategory == 'All'
-        ? ref.watch(templatesProvider)
-        : ref.watch(templatesByCategoryProvider(_selectedCategory));
+    final templatesAsync = ref.watch(templatesProvider);
+    final categories = ref.watch(templateCategoriesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -74,33 +72,50 @@ class _TemplatesScreenState extends ConsumerState<TemplatesScreen> {
             
             // Templates Grid
             Expanded(
-              child: templates.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No templates in this category',
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(16),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: MediaQuery.of(context).size.width > 1200
-                            ? 4
-                            : MediaQuery.of(context).size.width > 800
-                                ? 3
-                                : MediaQuery.of(context).size.width > 600
-                                    ? 2
-                                    : 1,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 0.75,
-                      ),
-                      itemCount: templates.length,
-                      itemBuilder: (context, index) {
-                        final template = templates[index];
-                        return _buildTemplateCard(template);
-                      },
-                    ),
+              child: templatesAsync.when(
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: Colors.white),
+                ),
+                error: (error, stack) => Center(
+                  child: Text(
+                    'Error loading templates: $error',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+                data: (allTemplates) {
+                  final templates = _selectedCategory == 'All'
+                      ? allTemplates
+                      : allTemplates.where((t) => t.category == _selectedCategory).toList();
+                  
+                  return templates.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'No templates in this category',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        )
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(16),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: MediaQuery.of(context).size.width > 1200
+                                ? 4
+                                : MediaQuery.of(context).size.width > 800
+                                    ? 3
+                                    : MediaQuery.of(context).size.width > 600
+                                        ? 2
+                                        : 1,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.75,
+                          ),
+                          itemCount: templates.length,
+                          itemBuilder: (context, index) {
+                            final template = templates[index];
+                            return _buildTemplateCard(template);
+                          },
+                        );
+                },
+              ),
             ),
           ],
         ),
