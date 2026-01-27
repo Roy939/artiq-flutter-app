@@ -35,7 +35,9 @@ class SubscriptionProvider with ChangeNotifier {
           .get(const GetOptions(source: Source.server));
 
       if (doc.exists) {
+        debugPrint('[ARTIQ DEBUG] Raw Firestore data: ${doc.data()}');
         _subscription = UserSubscription.fromJson(doc.data()!);
+        debugPrint('[ARTIQ DEBUG] Parsed subscription - tier: ${_subscription?.tier}, isPro: ${_subscription?.isPro}, isActive: ${_subscription?.isActive}');
       } else {
         // Create default free subscription
         _subscription = UserSubscription(
