@@ -193,8 +193,6 @@ class SubscriptionProvider with ChangeNotifier {
       ),
     );
   }
-}
-
 
   Future<void> cancelSubscription(BuildContext context) async {
     final user = _auth.currentUser;
@@ -323,3 +321,4 @@ class SubscriptionProvider with ChangeNotifier {
       debugPrint('[ARTIQ ERROR] Failed to open customer portal: $e');
     }
   }
+}

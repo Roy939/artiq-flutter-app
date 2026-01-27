@@ -126,7 +126,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
             
             // Show subscription details for Pro users
-            if (isPro && subscription != null) ..[
+            if (isPro && subscription != null) ...[
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 8),
