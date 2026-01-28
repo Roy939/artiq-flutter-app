@@ -1,37 +1,38 @@
 import 'dart:html' as html;
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
-import 'dart:convert';
 import '../models/canvas_models.dart';
 
 class ExportUtil {
+  // Fixed canvas size (Instagram Post standard)
+  static const double _canvasWidth = 1080;
+  static const double _canvasHeight = 1080;
+  
   /// Export canvas to PNG with optional watermark (Web-compatible)
   static Future<void> exportToPNG({
-    required CanvasState canvasState,
+    required List<DrawingElement> elements,
     required String filename,
     required bool addWatermark,
   }) async {
     try {
       // Create HTML canvas
       final canvas = html.CanvasElement(
-        width: canvasState.width.toInt(),
-        height: canvasState.height.toInt(),
+        width: _canvasWidth.toInt(),
+        height: _canvasHeight.toInt(),
       );
       final ctx = canvas.context2D;
       
-      // Draw background
-      ctx.fillStyle = _colorToHex(canvasState.backgroundColor);
+      // Draw white background
+      ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width!, canvas.height!);
       
       // Draw all elements
-      for (final element in canvasState.elements) {
+      for (final element in elements) {
         _drawElement(ctx, element);
       }
       
       // Add watermark if needed
       if (addWatermark) {
-        _addWatermarkToCanvas(ctx, canvas.width!.toDouble(), canvas.height!.toDouble());
+        _addWatermarkToCanvas(ctx, _canvasWidth, _canvasHeight);
       }
       
       // Convert to blob and download
@@ -53,13 +54,13 @@ class ExportUtil {
   
   /// Export canvas to JPG (Pro only)
   static Future<void> exportToJPG({
-    required CanvasState canvasState,
+    required List<DrawingElement> elements,
     required String filename,
   }) async {
     try {
       final canvas = html.CanvasElement(
-        width: canvasState.width.toInt(),
-        height: canvasState.height.toInt(),
+        width: _canvasWidth.toInt(),
+        height: _canvasHeight.toInt(),
       );
       final ctx = canvas.context2D;
       
@@ -67,12 +68,8 @@ class ExportUtil {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width!, canvas.height!);
       
-      // Draw background color
-      ctx.fillStyle = _colorToHex(canvasState.backgroundColor);
-      ctx.fillRect(0, 0, canvas.width!, canvas.height!);
-      
       // Draw all elements
-      for (final element in canvasState.elements) {
+      for (final element in elements) {
         _drawElement(ctx, element);
       }
       
@@ -108,7 +105,6 @@ class ExportUtil {
         ctx.strokeRect(rect.left, rect.top, rect.width, rect.height);
       }
     } else if (element is DrawingCircle) {
-      ctx.fillStyle = _colorToHex(element.color);
       ctx.beginPath();
       ctx.arc(
         element.center.dx,
@@ -118,6 +114,7 @@ class ExportUtil {
         2 * 3.14159,
       );
       if (element.filled) {
+        ctx.fillStyle = _colorToHex(element.color);
         ctx.fill();
       } else {
         ctx.strokeStyle = _colorToHex(element.color);
@@ -148,9 +145,6 @@ class ExportUtil {
         }
       }
       ctx.stroke();
-    } else if (element is DrawingImage) {
-      // For images, we'd need to decode base64 and draw
-      // Skipping for now as it's complex
     }
     
     ctx.restore();
