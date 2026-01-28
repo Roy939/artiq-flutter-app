@@ -37,11 +37,12 @@ class SubscriptionProvider with ChangeNotifier {
       if (doc.exists) {
         debugPrint('[ARTIQ DEBUG] Raw Firestore data: ${doc.data()}');
         _subscription = UserSubscription.fromJson(doc.data()!);
-        debugPrint('[ARTIQ DEBUG] Parsed subscription - tier: ${_subscription?.tier}, isPro: ${_subscription?.isPro}, isActive: ${_subscription?.isActive}');
+        debugPrint('[ARTIQ DEBUG] Parsed subscription - tier: ${_subscription?.tier}, isPro: ${_subscription?.isPro}, isActive: ${_subscription?.isActive}, isAdmin: ${_subscription?.isAdmin}');
       } else {
         // Create default free subscription
         _subscription = UserSubscription(
           userId: user.uid,
+          userEmail: user.email ?? '',
           tier: SubscriptionTier.free,
           isActive: true,
         );
@@ -55,6 +56,7 @@ class SubscriptionProvider with ChangeNotifier {
       // Default to free tier on error
       _subscription = UserSubscription(
         userId: user.uid ?? '',
+        userEmail: user.email ?? '',
         tier: SubscriptionTier.free,
         isActive: true,
       );

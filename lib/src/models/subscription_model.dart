@@ -1,5 +1,12 @@
 class UserSubscription {
+  // Admin emails that get free Pro access
+  static const List<String> adminEmails = [
+    'thompson9395681@gmail.com', // Owner account
+    // Add more admin emails here if needed
+  ];
+
   final String userId;
+  final String userEmail;
   final SubscriptionTier tier;
   final String? stripeCustomerId;
   final String? stripeSubscriptionId;
@@ -9,6 +16,7 @@ class UserSubscription {
 
   UserSubscription({
     required this.userId,
+    required this.userEmail,
     required this.tier,
     this.stripeCustomerId,
     this.stripeSubscriptionId,
@@ -17,7 +25,11 @@ class UserSubscription {
     this.isActive = false,
   });
 
-  bool get isPro => tier == SubscriptionTier.pro && isActive;
+  // Check if user is admin (gets free Pro access)
+  bool get isAdmin => adminEmails.contains(userEmail.toLowerCase());
+  
+  // Admin users always have Pro access, regardless of subscription
+  bool get isPro => isAdmin || (tier == SubscriptionTier.pro && isActive);
   bool get isFree => tier == SubscriptionTier.free || !isActive;
 
   // Free tier limits
@@ -32,6 +44,7 @@ class UserSubscription {
   factory UserSubscription.fromJson(Map<String, dynamic> json) {
     return UserSubscription(
       userId: json['userId'] as String,
+      userEmail: json['userEmail'] as String? ?? '',
       tier: SubscriptionTier.values.firstWhere(
         (e) => e.toString() == 'SubscriptionTier.${json['tier']}',
         orElse: () => SubscriptionTier.free,
@@ -63,6 +76,7 @@ class UserSubscription {
   Map<String, dynamic> toJson() {
     return {
       'userId': userId,
+      'userEmail': userEmail,
       'tier': tier.toString().split('.').last,
       'stripeCustomerId': stripeCustomerId,
       'stripeSubscriptionId': stripeSubscriptionId,
@@ -74,6 +88,7 @@ class UserSubscription {
 
   UserSubscription copyWith({
     String? userId,
+    String? userEmail,
     SubscriptionTier? tier,
     String? stripeCustomerId,
     String? stripeSubscriptionId,
@@ -83,6 +98,7 @@ class UserSubscription {
   }) {
     return UserSubscription(
       userId: userId ?? this.userId,
+      userEmail: userEmail ?? this.userEmail,
       tier: tier ?? this.tier,
       stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
       stripeSubscriptionId: stripeSubscriptionId ?? this.stripeSubscriptionId,
