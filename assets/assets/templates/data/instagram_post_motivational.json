@@ -1,0 +1,64 @@
+{
+  "id": "instagram_post_motivational",
+  "name": "Motivational Quote",
+  "category": "Social Media",
+  "size": {
+    "width": 1080,
+    "height": 1080
+  },
+  "thumbnail": "assets/templates/instagram_post_motivational.png",
+  "elements": [
+    {
+      "type": "rectangle",
+      "id": "bg_gradient_1",
+      "color": 4294934395,
+      "strokeWidth": 0,
+      "createdAt": "2026-01-27T00:00:00.000Z",
+      "topLeft": {"x": 0, "y": 0},
+      "bottomRight": {"x": 1080, "y": 1080},
+      "filled": true
+    },
+    {
+      "type": "text",
+      "id": "main_text",
+      "color": 4294967295,
+      "strokeWidth": 2,
+      "createdAt": "2026-01-27T00:00:00.000Z",
+      "text": "BELIEVE IN\nYOURSELF",
+      "position": {"x": 540, "y": 400},
+      "fontSize": 72,
+      "fontFamily": "Roboto"
+    },
+    {
+      "type": "text",
+      "id": "subtitle_text",
+      "color": 4294967295,
+      "strokeWidth": 1,
+      "createdAt": "2026-01-27T00:00:00.000Z",
+      "text": "Every day is a new beginning",
+      "position": {"x": 540, "y": 600},
+      "fontSize": 32,
+      "fontFamily": "Roboto"
+    },
+    {
+      "type": "circle",
+      "id": "decoration_1",
+      "color": 4294901760,
+      "strokeWidth": 0,
+      "createdAt": "2026-01-27T00:00:00.000Z",
+      "center": {"x": 150, "y": 150},
+      "radius": 60,
+      "filled": true
+    },
+    {
+      "type": "circle",
+      "id": "decoration_2",
+      "color": 4294901760,
+      "strokeWidth": 0,
+      "createdAt": "2026-01-27T00:00:00.000Z",
+      "center": {"x": 930, "y": 930},
+      "radius": 40,
+      "filled": true
+    }
+  ]
+}

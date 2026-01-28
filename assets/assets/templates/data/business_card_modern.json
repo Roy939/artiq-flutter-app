@@ -1,0 +1,15 @@
+{
+  "id": "business_card_modern",
+  "name": "Modern Business Card",
+  "category": "Business",
+  "size": {"width": 336, "height": 192},
+  "thumbnail": "assets/templates/business_card_modern.png",
+  "elements": [
+    {"type": "rectangle", "id": "left_section", "color": 4278198558, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 168, "y": 192}, "filled": true},
+    {"type": "circle", "id": "logo", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "center": {"x": 84, "y": 96}, "radius": 30, "filled": false},
+    {"type": "text", "id": "name", "color": 4278198558, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "JOHN DOE", "position": {"x": 252, "y": 70}, "fontSize": 20, "fontFamily": "Roboto"},
+    {"type": "text", "id": "title", "color": 4286611584, "strokeWidth": 1, "createdAt": "2026-01-27T00:00:00.000Z", "text": "Marketing Director", "position": {"x": 252, "y": 95}, "fontSize": 12, "fontFamily": "Roboto"},
+    {"type": "text", "id": "phone", "color": 4278198558, "strokeWidth": 1, "createdAt": "2026-01-27T00:00:00.000Z", "text": "+1 (555) 123-4567", "position": {"x": 252, "y": 120}, "fontSize": 10, "fontFamily": "Roboto"},
+    {"type": "text", "id": "email", "color": 4278198558, "strokeWidth": 1, "createdAt": "2026-01-27T00:00:00.000Z", "text": "john@company.com", "position": {"x": 252, "y": 135}, "fontSize": 10, "fontFamily": "Roboto"}
+  ]
+}

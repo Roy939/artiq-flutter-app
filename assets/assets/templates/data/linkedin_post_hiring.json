@@ -1,0 +1,15 @@
+{
+  "id": "linkedin_post_hiring",
+  "name": "Job Opening",
+  "category": "Business",
+  "size": {"width": 1200, "height": 1200},
+  "thumbnail": "assets/templates/linkedin_post_hiring.png",
+  "elements": [
+    {"type": "rectangle", "id": "bg", "color": 4278233845, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 1200, "y": 1200}, "filled": true},
+    {"type": "text", "id": "header", "color": 4294967295, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "text": "WE'RE HIRING!", "position": {"x": 600, "y": 300}, "fontSize": 64, "fontFamily": "Roboto"},
+    {"type": "text", "id": "subheader", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "Join Our Team", "position": {"x": 600, "y": 400}, "fontSize": 32, "fontFamily": "Roboto"},
+    {"type": "rectangle", "id": "job_box", "color": 4294967295, "strokeWidth": 3, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 200, "y": 500}, "bottomRight": {"x": 1000, "y": 650}, "filled": false},
+    {"type": "text", "id": "job_title", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "POSITION:\nYour Job Title Here", "position": {"x": 600, "y": 575}, "fontSize": 36, "fontFamily": "Roboto"},
+    {"type": "text", "id": "cta", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "Apply Now", "position": {"x": 600, "y": 900}, "fontSize": 28, "fontFamily": "Roboto"}
+  ]
+}

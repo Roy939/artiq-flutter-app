@@ -1,0 +1,12 @@
+{
+  "id": "instagram_story_quote",
+  "name": "Inspirational Quote",
+  "category": "Social Media",
+  "size": {"width": 1080, "height": 1920},
+  "thumbnail": "assets/templates/instagram_story_quote.png",
+  "elements": [
+    {"type": "rectangle", "id": "bg", "color": 4286578087, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 1080, "y": 1920}, "filled": true},
+    {"type": "text", "id": "quote", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "The best time to start\nwas yesterday.\nThe next best time\nis now.", "position": {"x": 540, "y": 900}, "fontSize": 48, "fontFamily": "Roboto"},
+    {"type": "text", "id": "attribution", "color": 4294967295, "strokeWidth": 1, "createdAt": "2026-01-27T00:00:00.000Z", "text": "- Unknown", "position": {"x": 540, "y": 1200}, "fontSize": 24, "fontFamily": "Roboto"}
+  ]
+}

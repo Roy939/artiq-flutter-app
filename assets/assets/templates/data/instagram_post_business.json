@@ -1,0 +1,13 @@
+{
+  "id": "instagram_post_business",
+  "name": "Business Announcement",
+  "category": "Business",
+  "size": {"width": 1080, "height": 1080},
+  "thumbnail": "assets/templates/instagram_post_business.png",
+  "elements": [
+    {"type": "rectangle", "id": "bg", "color": 4278198558, "strokeWidth": 0, "createdAt": "2026-01-27T00:00:00.000Z", "topLeft": {"x": 0, "y": 0}, "bottomRight": {"x": 1080, "y": 1080}, "filled": true},
+    {"type": "text", "id": "header", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "NEW PRODUCT\nLAUNCH", "position": {"x": 540, "y": 200}, "fontSize": 48, "fontFamily": "Roboto"},
+    {"type": "text", "id": "main", "color": 4294956800, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "YOUR PRODUCT\nHERE", "position": {"x": 540, "y": 540}, "fontSize": 64, "fontFamily": "Roboto"},
+    {"type": "text", "id": "footer", "color": 4294967295, "strokeWidth": 2, "createdAt": "2026-01-27T00:00:00.000Z", "text": "COMING SOON", "position": {"x": 540, "y": 880}, "fontSize": 36, "fontFamily": "Roboto"}
+  ]
+}
