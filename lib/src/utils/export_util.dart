@@ -35,16 +35,11 @@ class ExportUtil {
         _addWatermarkToCanvas(ctx, _canvasWidth, _canvasHeight);
       }
       
-      // Convert to blob and download
-      canvas.toBlob((blob) {
-        if (blob != null) {
-          final url = html.Url.createObjectUrlFromBlob(blob);
-          final anchor = html.AnchorElement(href: url)
-            ..setAttribute('download', '$filename.png')
-            ..click();
-          html.Url.revokeObjectUrl(url);
-        }
-      }, 'image/png');
+      // Convert to data URL and download
+      final dataUrl = canvas.toDataUrl('image/png');
+      final anchor = html.AnchorElement(href: dataUrl)
+        ..setAttribute('download', '$filename.png')
+        ..click();
       
     } catch (e) {
       print('Export error: $e');
@@ -73,16 +68,11 @@ class ExportUtil {
         _drawElement(ctx, element);
       }
       
-      // Convert to blob and download
-      canvas.toBlob((blob) {
-        if (blob != null) {
-          final url = html.Url.createObjectUrlFromBlob(blob);
-          final anchor = html.AnchorElement(href: url)
-            ..setAttribute('download', '$filename.jpg')
-            ..click();
-          html.Url.revokeObjectUrl(url);
-        }
-      }, 'image/jpeg', 0.95);
+      // Convert to data URL and download
+      final dataUrl = canvas.toDataUrl('image/jpeg', 0.95);
+      final anchor = html.AnchorElement(href: dataUrl)
+        ..setAttribute('download', '$filename.jpg')
+        ..click();
       
     } catch (e) {
       print('Export error: $e');

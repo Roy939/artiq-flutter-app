@@ -240,7 +240,7 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
         await ExportUtil.exportToPNG(
           elements: _canvasState.elements,
           filename: filename,
-          addWatermark: !subscription.isPro,
+          addWatermark: isFree,
         );
       } else if (format == 'jpg') {
         await ExportUtil.exportToJPG(
