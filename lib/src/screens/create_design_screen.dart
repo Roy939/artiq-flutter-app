@@ -223,8 +223,6 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
     );
   }
 
-  final GlobalKey _canvasKey = GlobalKey();
-
   Future<void> _exportAs(String format) async {
     try {
       final subscriptionProvider = provider.Provider.of<SubscriptionProvider>(context, listen: false);
@@ -240,13 +238,13 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
       
       if (format == 'png') {
         await ExportUtil.exportToPNG(
-          canvasKey: _canvasKey,
+          canvasState: _canvasState,
           filename: filename,
           addWatermark: isFree,
         );
       } else if (format == 'jpg') {
         await ExportUtil.exportToJPG(
-          canvasKey: _canvasKey,
+          canvasState: _canvasState,
           filename: filename,
         );
       }
@@ -366,12 +364,9 @@ class _CreateDesignScreenState extends ConsumerState<CreateDesignScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: RepaintBoundary(
-                      key: _canvasKey,
-                      child: DrawingCanvas(
-                        canvasState: _canvasState,
-                        onStateChanged: _updateCanvasState,
-                      ),
+                    child: DrawingCanvas(
+                      canvasState: _canvasState,
+                      onStateChanged: _updateCanvasState,
                     ),
                   ),
                 ),
