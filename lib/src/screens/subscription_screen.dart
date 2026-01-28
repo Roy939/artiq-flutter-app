@@ -70,7 +70,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 _buildPlanCard(
                   context,
                   title: 'Pro',
-                  price: '\$8.99',
+                  price: '\$9.99',
                   period: 'per month',
                   features: [
                     'Unlimited designs',
