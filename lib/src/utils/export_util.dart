@@ -97,15 +97,17 @@ class ExportUtil {
   static void _drawElement(html.CanvasRenderingContext2D ctx, DrawingElement element) {
     ctx.save();
     
-    if (element is RectangleElement) {
-      ctx.fillStyle = _colorToHex(element.color);
-      ctx.fillRect(
-        element.offset.dx,
-        element.offset.dy,
-        element.size.width,
-        element.size.height,
-      );
-    } else if (element is CircleElement) {
+    if (element is DrawingRectangle) {
+      final rect = element.rect;
+      if (element.filled) {
+        ctx.fillStyle = _colorToHex(element.color);
+        ctx.fillRect(rect.left, rect.top, rect.width, rect.height);
+      } else {
+        ctx.strokeStyle = _colorToHex(element.color);
+        ctx.lineWidth = element.strokeWidth;
+        ctx.strokeRect(rect.left, rect.top, rect.width, rect.height);
+      }
+    } else if (element is DrawingCircle) {
       ctx.fillStyle = _colorToHex(element.color);
       ctx.beginPath();
       ctx.arc(
@@ -115,21 +117,27 @@ class ExportUtil {
         0,
         2 * 3.14159,
       );
-      ctx.fill();
-    } else if (element is LineElement) {
+      if (element.filled) {
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = _colorToHex(element.color);
+        ctx.lineWidth = element.strokeWidth;
+        ctx.stroke();
+      }
+    } else if (element is DrawingLine) {
       ctx.strokeStyle = _colorToHex(element.color);
       ctx.lineWidth = element.strokeWidth;
       ctx.beginPath();
       ctx.moveTo(element.start.dx, element.start.dy);
       ctx.lineTo(element.end.dx, element.end.dy);
       ctx.stroke();
-    } else if (element is TextElement) {
+    } else if (element is DrawingText) {
       ctx.fillStyle = _colorToHex(element.color);
       ctx.font = '${element.fontSize}px ${element.fontFamily}';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText(element.text, element.offset.dx, element.offset.dy);
-    } else if (element is PathElement) {
+      ctx.fillText(element.text, element.position.dx, element.position.dy);
+    } else if (element is DrawingStroke) {
       ctx.strokeStyle = _colorToHex(element.color);
       ctx.lineWidth = element.strokeWidth;
       ctx.beginPath();
@@ -140,6 +148,9 @@ class ExportUtil {
         }
       }
       ctx.stroke();
+    } else if (element is DrawingImage) {
+      // For images, we'd need to decode base64 and draw
+      // Skipping for now as it's complex
     }
     
     ctx.restore();
