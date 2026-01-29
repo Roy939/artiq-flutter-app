@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/subscription_model.dart';
+import '../models/promo_code_model.dart';
 
 class SubscriptionProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -260,6 +261,43 @@ class SubscriptionProvider with ChangeNotifier {
         _showError(context, 'Error: $e');
       }
       debugPrint('[ARTIQ ERROR] Failed to cancel subscription: $e');
+    }
+  }
+
+  Future<bool> applyPromoCode(String code) async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+
+    // Validate promo code
+    final promoCode = PromoCodes.validate(code);
+    if (promoCode == null) {
+      debugPrint('[ARTIQ DEBUG] Invalid promo code: $code');
+      return false;
+    }
+
+    try {
+      // Calculate subscription end date
+      final now = DateTime.now();
+      final endDate = DateTime(now.year, now.month + promoCode.durationMonths, now.day);
+
+      // Create updated subscription with promo code benefits
+      final updatedSubscription = UserSubscription(
+        userId: user.uid,
+        userEmail: user.email ?? '',
+        tier: promoCode.tier,
+        subscriptionStart: now,
+        subscriptionEnd: endDate,
+        isActive: true,
+      );
+
+      // Save to Firestore
+      await updateSubscription(updatedSubscription);
+
+      debugPrint('[ARTIQ DEBUG] Promo code applied successfully: $code');
+      return true;
+    } catch (e) {
+      debugPrint('[ARTIQ ERROR] Failed to apply promo code: $e');
+      return false;
     }
   }
 

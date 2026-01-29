@@ -136,35 +136,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
 
       if (user != null) {
-        // Apply promo code if provided
-        if (_promoCodeController.text.trim().isNotEmpty) {
-          final subscriptionProvider = provider_pkg.Provider.of<SubscriptionProvider>(context, listen: false);
-          final promoApplied = await subscriptionProvider.applyPromoCode(_promoCodeController.text.trim());
-          
-          if (promoApplied) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account created! Promo code applied - You have 3 months Pro access!'),
-                backgroundColor: Colors.green,
-                duration: Duration(seconds: 4),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account created! (Invalid promo code)'),
-                backgroundColor: Colors.orange,
-              ),
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Account created successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+        // Promo code functionality temporarily disabled
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Account created successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
