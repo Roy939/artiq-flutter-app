@@ -11,6 +11,7 @@
     ]
   },
   "hosting": {
+    "site": "artiq-1ebb2",
     "public": "build/web",
     "ignore": [
       "firebase.json",
