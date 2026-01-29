@@ -391,9 +391,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 Container(
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                      colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
                     ),
                     borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFFFF6B35).withOpacity(0.4),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: ElevatedButton.icon(
                     onPressed: _isLoading ? null : () {
