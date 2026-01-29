@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:artiq_flutter/src/services/auth_service.dart';
+import 'package:provider/provider.dart' as provider_pkg;
+import '../providers/subscription_provider.dart';
+import '../providers/demo_mode_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -12,13 +15,16 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _promoCodeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _showPromoField = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _promoCodeController.dispose();
     super.dispose();
   }
 
@@ -130,12 +136,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
 
       if (user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account created successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+        // Apply promo code if provided
+        if (_promoCodeController.text.trim().isNotEmpty) {
+          final subscriptionProvider = provider_pkg.Provider.of<SubscriptionProvider>(context, listen: false);
+          final promoApplied = await subscriptionProvider.applyPromoCode(_promoCodeController.text.trim());
+          
+          if (promoApplied) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Account created! Promo code applied - You have 3 months Pro access!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 4),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Account created! (Invalid promo code)'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account created successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -245,6 +274,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
+                const SizedBox(height: 16),
+                // Product Hunt Badge
+                GestureDetector(
+                  onTap: () {
+                    // Open Product Hunt page
+                    // You can use url_launcher package here
+                  },
+                  child: Image.network(
+                    'https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=artiq&theme=light',
+                    width: 250,
+                    height: 54,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _emailController,
@@ -285,6 +330,61 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 16),
+                // Promo code section
+                if (_showPromoField)
+                  Column(
+                    children: [
+                      TextFormField(
+                        controller: _promoCodeController,
+                        decoration: InputDecoration(
+                          labelText: 'Promo Code (Optional)',
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.local_offer),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                _showPromoField = false;
+                                _promoCodeController.clear();
+                              });
+                            },
+                          ),
+                        ),
+                        enabled: !_isLoading,
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          '🎉 Product Hunt users: Use code PRODUCTHUNT for 3 months Pro free!',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.blue,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                if (!_showPromoField)
+                  TextButton.icon(
+                    onPressed: () {
+                      setState(() {
+                        _showPromoField = true;
+                      });
+                    },
+                    icon: const Icon(Icons.local_offer, size: 16),
+                    label: const Text('Have a promo code?'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                    ),
+                  ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleEmailLogin,
@@ -307,6 +407,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
+                ),
+                const SizedBox(height: 16),
+                // Try Demo Button
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : () {
+                      final demoProvider = provider_pkg.Provider.of<DemoModeProvider>(context, listen: false);
+                      demoProvider.enableDemoMode();
+                    },
+                    icon: const Icon(Icons.play_circle_outline, size: 24),
+                    label: const Text('Try Demo - No Sign Up Required', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '✨ Explore ARTIQ instantly - no account needed',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black54,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 TextButton(

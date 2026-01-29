@@ -4,12 +4,21 @@ import 'package:provider/provider.dart' as provider;
 import 'package:artiq_flutter/src/screens/login_screen.dart';
 import 'package:artiq_flutter/src/screens/home_screen.dart';
 import 'package:artiq_flutter/src/providers/subscription_provider.dart';
+import 'package:artiq_flutter/src/providers/demo_mode_provider.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Check if demo mode is enabled
+    final demoModeProvider = provider.Provider.of<DemoModeProvider>(context);
+    
+    if (demoModeProvider.isDemoMode) {
+      // User is in demo mode, show home screen without auth
+      return const HomeScreen();
+    }
+    
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {

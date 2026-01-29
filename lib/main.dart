@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:artiq_flutter/src/screens/auth_wrapper.dart';
 import 'package:artiq_flutter/src/providers/subscription_provider.dart';
+import 'package:artiq_flutter/src/providers/demo_mode_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -27,6 +28,7 @@ void main() async {
       child: provider.MultiProvider(
         providers: [
           provider.ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
+          provider.ChangeNotifierProvider(create: (_) => DemoModeProvider()),
         ],
         child: const MyApp(),
       ),
