@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:artiq_flutter/src/screens/login_screen.dart';
 import 'package:artiq_flutter/src/screens/home_screen.dart';
+import 'package:artiq_flutter/src/screens/simple_editor_screen.dart';
 import 'package:artiq_flutter/src/providers/subscription_provider.dart';
 import 'package:artiq_flutter/src/providers/demo_mode_provider.dart';
 
@@ -15,8 +16,8 @@ class AuthWrapper extends StatelessWidget {
     final demoModeProvider = provider.Provider.of<DemoModeProvider>(context);
     
     if (demoModeProvider.isDemoMode) {
-      // User is in demo mode, show home screen without auth
-      return const HomeScreen();
+      // User is in demo mode, show 3-panel editor directly
+      return const SimpleEditorScreen();
     }
     
     return StreamBuilder<User?>(
