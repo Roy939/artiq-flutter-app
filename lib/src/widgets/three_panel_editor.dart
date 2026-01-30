@@ -22,6 +22,9 @@ class ThreePanelEditor extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16),
             child: ElevatedButton.icon(
               onPressed: () async {
+                // Get Provider reference BEFORE showing dialog
+                final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                
                 final template = await showDialog(
                   context: context,
                   builder: (context) => const TemplateGalleryModal(),
@@ -29,7 +32,6 @@ class ThreePanelEditor extends StatelessWidget {
                 if (template != null && template['id'] != null) {
                   try {
                     // Load template into canvas
-                    final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
                     canvasState.loadTemplate(template['id']);
                     
                     ScaffoldMessenger.of(context).showSnackBar(
