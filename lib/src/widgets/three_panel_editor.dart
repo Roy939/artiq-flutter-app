@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:artiq_flutter/src/widgets/left_tools_panel.dart';
 import 'package:artiq_flutter/src/widgets/interactive_canvas.dart';
@@ -37,19 +36,15 @@ class ThreePanelEditor extends StatelessWidget {
                 
                 if (template != null && template['id'] != null) {
                   print('🔍 DEBUG: Loading template ID: ${template['id']}');
-                  // Defer template loading until after the current frame completes
-                  // This prevents crashes during dialog dismissal
-                  SchedulerBinding.instance.addPostFrameCallback((_) {
-                    try {
-                      // Load template into canvas
-                      canvasState.loadTemplate(template['id']);
-                      print('🔍 DEBUG: Template loaded successfully: ${template['title']}');
-                      // Template loaded! The canvas will update automatically via notifyListeners()
-                    } catch (e, stack) {
-                      print('🔍 DEBUG: Error loading template: $e');
-                      print('🔍 DEBUG: Stack trace: $stack');
-                    }
-                  });
+                  try {
+                    // Load template into canvas immediately
+                    canvasState.loadTemplate(template['id']);
+                    print('🔍 DEBUG: Template loaded successfully: ${template['title']}');
+                    // Template loaded! The canvas will update automatically via notifyListeners()
+                  } catch (e, stack) {
+                    print('🔍 DEBUG: Error loading template: $e');
+                    print('🔍 DEBUG: Stack trace: $stack');
+                  }
                 } else {
                   print('🔍 DEBUG: Template is null or missing id');
                 }
