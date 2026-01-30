@@ -22,17 +22,24 @@ class ThreePanelEditor extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16),
             child: ElevatedButton.icon(
               onPressed: () async {
+                print('🔍 DEBUG: Browse Templates button clicked');
+                
                 // Get Provider reference BEFORE showing dialog
                 final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                print('🔍 DEBUG: Got canvas state: ${canvasState != null}');
                 
                 final template = await showDialog(
                   context: context,
                   builder: (context) => const TemplateGalleryModal(),
                 );
+                print('🔍 DEBUG: Dialog returned: $template');
+                
                 if (template != null && template['id'] != null) {
+                  print('🔍 DEBUG: Loading template ID: ${template['id']}');
                   try {
                     // Load template into canvas
                     canvasState.loadTemplate(template['id']);
+                    print('🔍 DEBUG: Template loaded successfully');
                     
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -41,7 +48,9 @@ class ThreePanelEditor extends StatelessWidget {
                         duration: const Duration(seconds: 2),
                       ),
                     );
-                  } catch (e) {
+                  } catch (e, stack) {
+                    print('🔍 DEBUG: Error loading template: $e');
+                    print('🔍 DEBUG: Stack trace: $stack');
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Error loading template: $e'),
@@ -50,6 +59,8 @@ class ThreePanelEditor extends StatelessWidget {
                       ),
                     );
                   }
+                } else {
+                  print('🔍 DEBUG: Template is null or missing id');
                 }
               },
               icon: const Icon(Icons.collections, size: 20),

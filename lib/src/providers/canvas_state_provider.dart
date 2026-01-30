@@ -230,8 +230,11 @@ class CanvasStateProvider extends ChangeNotifier {
   
   // Load template - NEW METHOD
   void loadTemplate(String templateId) {
+    print('🔍 CANVAS: loadTemplate called with ID: $templateId');
     _saveState();
+    print('🔍 CANVAS: State saved');
     _elements.clear();
+    print('🔍 CANVAS: Elements cleared, count: ${_elements.length}');
     
     // Generate template elements based on template ID
     switch (templateId) {
@@ -263,15 +266,20 @@ class CanvasStateProvider extends ChangeNotifier {
         _loadEmailHeaderTemplate();
         break;
       default:
+        print('🔍 CANVAS: Unknown template ID, loading default');
         _loadDefaultTemplate();
     }
     
+    print('🔍 CANVAS: Template loaded, elements count: ${_elements.length}');
     _redoStack.clear();
+    print('🔍 CANVAS: Calling notifyListeners()');
     notifyListeners();
+    print('🔍 CANVAS: notifyListeners() completed');
   }
   
   // Instagram Post Template
   void _loadInstagramPostTemplate() {
+    print('🔍 CANVAS: _loadInstagramPostTemplate() called');
     // Background rectangle
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
