@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:artiq_flutter/src/widgets/left_tools_panel.dart';
 import 'package:artiq_flutter/src/widgets/interactive_canvas.dart';
 import 'package:artiq_flutter/src/widgets/right_properties_panel.dart';
 import 'package:artiq_flutter/src/widgets/template_gallery_modal.dart';
+import 'package:artiq_flutter/src/providers/canvas_state_provider.dart';
 
 /// Three-panel editor layout: left tools, center canvas, right properties
 class ThreePanelEditor extends StatelessWidget {
@@ -25,11 +27,15 @@ class ThreePanelEditor extends StatelessWidget {
                   builder: (context) => const TemplateGalleryModal(),
                 );
                 if (template != null) {
-                  // Template selected - could load it into canvas here
+                  // Load template into canvas
+                  final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                  canvasState.loadTemplate(template['id']);
+                  
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Loading template: ${template['title']}'),
-                      backgroundColor: Colors.deepPurple,
+                      content: Text('✨ Loaded: ${template['title']}'),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                 }
