@@ -39,25 +39,11 @@ class ThreePanelEditor extends StatelessWidget {
                   try {
                     // Load template into canvas
                     canvasState.loadTemplate(template['id']);
-                    print('🔍 DEBUG: Template loaded successfully');
-                    
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('✨ Loaded: ${template['title']}'),
-                        backgroundColor: Colors.green,
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
+                    print('🔍 DEBUG: Template loaded successfully: ${template['title']}');
+                    // Template loaded! The canvas will update automatically via notifyListeners()
                   } catch (e, stack) {
                     print('🔍 DEBUG: Error loading template: $e');
                     print('🔍 DEBUG: Stack trace: $stack');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Error loading template: $e'),
-                        backgroundColor: Colors.red,
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
                   }
                 } else {
                   print('🔍 DEBUG: Template is null or missing id');
