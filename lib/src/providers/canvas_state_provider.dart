@@ -340,7 +340,7 @@ class CanvasStateProvider extends ChangeNotifier {
     // Decorative line
     _elements.add(CanvasElement(
       type: ElementType.line,
-      bounds: const Rect.fromPoints(Offset(100, 250), Offset(500, 250)),
+      bounds: Rect.fromPoints(const Offset(100, 250), const Offset(500, 250)),
       color: Colors.white,
       strokeWidth: 2,
     ));
