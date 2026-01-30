@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:artiq_flutter/src/widgets/left_tools_panel.dart';
 
 /// Three-panel editor layout: left tools, center canvas, right properties
 class ThreePanelEditor extends StatelessWidget {
@@ -14,16 +15,7 @@ class ThreePanelEditor extends StatelessWidget {
       body: Row(
         children: [
           // Left Panel - Tools
-          Container(
-            width: 80,
-            color: Colors.grey[200],
-            child: const Center(
-              child: Text(
-                'Tools',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+          const LeftToolsPanel(),
           
           // Center Panel - Canvas
           Expanded(
