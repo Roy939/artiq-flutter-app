@@ -364,6 +364,71 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                 const SizedBox(height: 24),
+                // Try Demo Button - PRIMARY CTA
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFFFF6B35).withOpacity(0.5),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : () {
+                      final demoProvider = provider_pkg.Provider.of<DemoModeProvider>(context, listen: false);
+                      demoProvider.enableDemoMode();
+                    },
+                    icon: const Icon(Icons.play_circle_filled, size: 28, color: Colors.white),
+                    label: const Text(
+                      'Try Demo - No Sign Up Required',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  '✨ Explore ARTIQ instantly - no account needed',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 32),
+                const Divider(height: 32),
+                const Text(
+                  'Or sign in with your account',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _handleEmailLogin,
                   style: ElevatedButton.styleFrom(
@@ -385,46 +450,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                ),
-                const SizedBox(height: 16),
-                // Try Demo Button
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6B35), Color(0xFFFF8C42)],
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xFFFF6B35).withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton.icon(
-                    onPressed: _isLoading ? null : () {
-                      final demoProvider = provider_pkg.Provider.of<DemoModeProvider>(context, listen: false);
-                      demoProvider.enableDemoMode();
-                    },
-                    icon: const Icon(Icons.play_circle_outline, size: 24),
-                    label: const Text('Try Demo - No Sign Up Required', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  '✨ Explore ARTIQ instantly - no account needed',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.black54,
-                    fontStyle: FontStyle.italic,
-                  ),
-                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
                 TextButton(
