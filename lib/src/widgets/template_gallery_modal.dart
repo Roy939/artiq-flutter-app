@@ -292,48 +292,57 @@ class _TemplateCardState extends State<_TemplateCard> {
 // Professional template data
 final List<Map<String, dynamic>> _templates = [
   {
+    'id': 'instagram_post',
     'title': 'Instagram Post - Modern',
     'category': 'Social Media',
     'color': const Color(0xFF6366F1),
   },
   {
+    'id': 'business_presentation',
     'title': 'Business Presentation',
     'category': 'Presentations',
     'color': const Color(0xFF8B5CF6),
   },
   {
+    'id': 'facebook_ad',
     'title': 'Facebook Ad - Sale',
     'category': 'Marketing',
     'color': const Color(0xFFEC4899),
   },
   {
+    'id': 'linkedin_banner',
     'title': 'LinkedIn Banner',
     'category': 'Social Media',
     'color': const Color(0xFF06B6D4),
   },
   {
+    'id': 'product_flyer',
     'title': 'Product Flyer',
     'category': 'Marketing',
     'color': const Color(0xFFF59E0B),
   },
   {
+    'id': 'business_card',
     'title': 'Business Card',
     'category': 'Business',
     'color': const Color(0xFF10B981),
   },
   {
+    'id': 'youtube_thumbnail',
     'title': 'YouTube Thumbnail',
     'category': 'Social Media',
     'color': const Color(0xFFEF4444),
   },
   {
-    'title': 'Infographic',
-    'category': 'Education',
+    'id': 'twitter_post',
+    'title': 'Twitter Post',
+    'category': 'Social Media',
     'color': const Color(0xFF3B82F6),
   },
   {
-    'title': 'Event Poster',
-    'category': 'Marketing',
+    'id': 'email_header',
+    'title': 'Email Header',
+    'category': 'Business',
     'color': const Color(0xFFA855F7),
   },
 ];

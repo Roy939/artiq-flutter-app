@@ -26,18 +26,28 @@ class ThreePanelEditor extends StatelessWidget {
                   context: context,
                   builder: (context) => const TemplateGalleryModal(),
                 );
-                if (template != null) {
-                  // Load template into canvas
-                  final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
-                  canvasState.loadTemplate(template['id']);
-                  
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('✨ Loaded: ${template['title']}'),
-                      backgroundColor: Colors.green,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
+                if (template != null && template['id'] != null) {
+                  try {
+                    // Load template into canvas
+                    final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                    canvasState.loadTemplate(template['id']);
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('✨ Loaded: ${template['title']}'),
+                        backgroundColor: Colors.green,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error loading template: $e'),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  }
                 }
               },
               icon: const Icon(Icons.collections, size: 20),
