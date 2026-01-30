@@ -228,13 +228,10 @@ class CanvasStateProvider extends ChangeNotifier {
     notifyListeners();
   }
   
-  // Load template - NEW METHOD
+  // Load template
   void loadTemplate(String templateId) {
-    print('🔍 CANVAS: loadTemplate called with ID: $templateId');
     _saveState();
-    print('🔍 CANVAS: State saved');
     _elements.clear();
-    print('🔍 CANVAS: Elements cleared, count: ${_elements.length}');
     
     // Generate template elements based on template ID
     switch (templateId) {
@@ -266,324 +263,632 @@ class CanvasStateProvider extends ChangeNotifier {
         _loadEmailHeaderTemplate();
         break;
       default:
-        print('🔍 CANVAS: Unknown template ID, loading default');
         _loadDefaultTemplate();
     }
     
-    print('🔍 CANVAS: Template loaded, elements count: ${_elements.length}');
     _redoStack.clear();
-    print('🔍 CANVAS: Calling notifyListeners()');
     notifyListeners();
-    print('🔍 CANVAS: notifyListeners() completed');
   }
   
-  // Instagram Post Template
+  // Instagram Post Template - Professional Design
   void _loadInstagramPostTemplate() {
-    print('🔍 CANVAS: _loadInstagramPostTemplate() called');
-    // Background rectangle
+    // Modern dark background
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 50, 400, 400),
-      color: Colors.blue.shade400,
+      bounds: const Rect.fromLTWH(50, 50, 1080, 1080),
+      color: Color(0xFF1a1a2e),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Title text
+    // Accent color bar (top)
     _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'Your Brand',
-      bounds: const Rect.fromLTWH(100, 150, 300, 60),
-      color: Colors.white,
-      strokeWidth: 2,
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 1080, 8),
+      color: Color(0xFF00d4ff),
+      strokeWidth: 0,
+      filled: true,
     ));
     
-    // Subtitle text
+    // Main content area with subtle background
     _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'Instagram Post',
-      bounds: const Rect.fromLTWH(100, 220, 300, 40),
-      color: Colors.white70,
-      strokeWidth: 1.5,
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(100, 200, 980, 700),
+      color: Color(0xFF16213e),
+      strokeWidth: 0,
+      filled: true,
     ));
     
-    // Decorative circle
+    // Headline text (large, bold)
     _elements.add(CanvasElement(
-      type: ElementType.circle,
-      bounds: const Rect.fromLTWH(350, 320, 80, 80),
+      type: ElementType.text,
+      text: 'ELEVATE YOUR BRAND',
+      bounds: const Rect.fromLTWH(150, 350, 880, 100),
       color: Colors.white,
       strokeWidth: 3,
     ));
-  }
-  
-  // Business Presentation Template
-  void _loadBusinessPresentationTemplate() {
-    // Background
+    
+    // Subheadline
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Professional Design | Premium Quality',
+      bounds: const Rect.fromLTWH(150, 480, 880, 60),
+      color: Color(0xFF00d4ff),
+      strokeWidth: 2,
+    ));
+    
+    // Body text
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Transform your social media presence',
+      bounds: const Rect.fromLTWH(150, 580, 880, 50),
+      color: Color(0xFFb8b8b8),
+      strokeWidth: 1.5,
+    ));
+    
+    // Decorative geometric element (circle)
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(900, 750, 120, 120),
+      color: Color(0xFF00d4ff),
+      strokeWidth: 4,
+    ));
+    
+    // Bottom accent line
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 50, 500, 350),
-      color: Colors.purple.shade300,
+      bounds: const Rect.fromLTWH(150, 950, 400, 4),
+      color: Color(0xFF00d4ff),
+      strokeWidth: 0,
+      filled: true,
+    ));
+  }
+  
+  // Business Presentation Template - Professional Design
+  void _loadBusinessPresentationTemplate() {
+    // Main background (corporate dark blue)
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 1920, 1080),
+      color: Color(0xFF0f2027),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Title
+    // Left accent panel
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 600, 1080),
+      color: Color(0xFF203a43),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Gold accent bar
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 12, 1080),
+      color: Color(0xFFffd700),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Main title (large, professional)
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Presentation Title',
-      bounds: const Rect.fromLTWH(100, 120, 400, 60),
+      text: 'QUARTERLY BUSINESS REVIEW',
+      bounds: const Rect.fromLTWH(750, 300, 1100, 120),
       color: Colors.white,
-      strokeWidth: 2,
+      strokeWidth: 3.5,
     ));
     
     // Subtitle
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Your Company Name',
-      bounds: const Rect.fromLTWH(100, 190, 400, 40),
-      color: Colors.white70,
+      text: 'Strategic Insights & Performance Metrics',
+      bounds: const Rect.fromLTWH(750, 450, 1100, 70),
+      color: Color(0xFFffd700),
+      strokeWidth: 2,
+    ));
+    
+    // Company name/presenter info
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Your Company | 2026',
+      bounds: const Rect.fromLTWH(750, 950, 600, 50),
+      color: Color(0xFFb8b8b8),
       strokeWidth: 1.5,
     ));
     
-    // Decorative line
+    // Decorative circle on left panel
     _elements.add(CanvasElement(
-      type: ElementType.line,
-      bounds: Rect.fromPoints(const Offset(100, 250), const Offset(500, 250)),
-      color: Colors.white,
-      strokeWidth: 2,
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(250, 450, 200, 200),
+      color: Color(0xFFffd700),
+      strokeWidth: 3,
+    ));
+    
+    // Accent line under title
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(750, 560, 450, 5),
+      color: Color(0xFFffd700),
+      strokeWidth: 0,
+      filled: true,
     ));
   }
   
-  // Facebook Ad Template
+  // Facebook Ad Template - Professional Design
   void _loadFacebookAdTemplate() {
-    // Background
+    // Gradient background (purple to pink)
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 50, 400, 400),
-      color: Colors.pink.shade300,
+      bounds: const Rect.fromLTWH(50, 50, 1200, 1200),
+      color: Color(0xFF6a11cb),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Sale badge circle
+    // Secondary gradient overlay
     _elements.add(CanvasElement(
-      type: ElementType.circle,
-      bounds: const Rect.fromLTWH(150, 100, 200, 200),
-      color: Colors.white,
-      strokeWidth: 4,
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 600, 1200, 600),
+      color: Color(0xFF2575fc),
+      strokeWidth: 0,
+      filled: true,
     ));
     
-    // Sale text
+    // Main offer badge
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(350, 300, 500, 500),
+      color: Colors.white,
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Offer text (large)
     _elements.add(CanvasElement(
       type: ElementType.text,
       text: '50% OFF',
-      bounds: const Rect.fromLTWH(180, 170, 140, 60),
-      color: Colors.pink.shade600,
-      strokeWidth: 2,
+      bounds: const Rect.fromLTWH(450, 450, 300, 100),
+      color: Color(0xFF6a11cb),
+      strokeWidth: 4,
+    ));
+    
+    // Limited time text
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'LIMITED TIME OFFER',
+      bounds: const Rect.fromLTWH(400, 580, 400, 50),
+      color: Color(0xFF2575fc),
+      strokeWidth: 1.5,
+    ));
+    
+    // CTA button background
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(400, 950, 400, 100),
+      color: Color(0xFFffd700),
+      strokeWidth: 0,
+      filled: true,
     ));
     
     // CTA text
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Shop Now',
-      bounds: const Rect.fromLTWH(150, 330, 200, 40),
-      color: Colors.white,
-      strokeWidth: 1.5,
+      text: 'SHOP NOW',
+      bounds: const Rect.fromLTWH(450, 975, 300, 50),
+      color: Color(0xFF1a1a2e),
+      strokeWidth: 2.5,
+    ));
+    
+    // Decorative accent circles
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(150, 150, 120, 120),
+      color: Color(0xFFffd700),
+      strokeWidth: 6,
+    ));
+    
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(950, 1000, 100, 100),
+      color: Color(0xFFffd700),
+      strokeWidth: 5,
     ));
   }
   
-  // LinkedIn Banner Template
+  // LinkedIn Banner Template - Professional Design
   void _loadLinkedInBannerTemplate() {
-    // Background
+    // Professional blue gradient background
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 100, 500, 200),
-      color: Colors.cyan.shade400,
+      bounds: const Rect.fromLTWH(50, 50, 1584, 396),
+      color: Color(0xFF0a66c2),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Name text
-    _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'Your Name',
-      bounds: const Rect.fromLTWH(100, 150, 400, 50),
-      color: Colors.white,
-      strokeWidth: 2,
-    ));
-    
-    // Title text
-    _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'Professional Title',
-      bounds: const Rect.fromLTWH(100, 210, 400, 35),
-      color: Colors.white70,
-      strokeWidth: 1.5,
-    ));
-  }
-  
-  // Product Flyer Template
-  void _loadProductFlyerTemplate() {
-    // Background
+    // Darker overlay section
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 50, 350, 500),
-      color: Colors.orange.shade300,
+      bounds: const Rect.fromLTWH(50, 50, 800, 396),
+      color: Color(0xFF004182),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Product area
+    // Name text (large, professional)
     _elements.add(CanvasElement(
-      type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(100, 100, 250, 200),
+      type: ElementType.text,
+      text: 'JANE ANDERSON',
+      bounds: const Rect.fromLTWH(900, 120, 650, 80),
       color: Colors.white,
       strokeWidth: 3,
     ));
     
-    // Product name
+    // Professional title
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Product Name',
-      bounds: const Rect.fromLTWH(100, 330, 250, 50),
-      color: Colors.white,
-      strokeWidth: 2,
+      text: 'Chief Technology Officer | Innovation Leader',
+      bounds: const Rect.fromLTWH(900, 220, 650, 50),
+      color: Color(0xFFe8e8e8),
+      strokeWidth: 1.8,
     ));
     
-    // Description
+    // Expertise/tagline
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Amazing features',
-      bounds: const Rect.fromLTWH(100, 390, 250, 35),
-      color: Colors.white70,
+      text: 'Transforming businesses through technology',
+      bounds: const Rect.fromLTWH(900, 290, 650, 40),
+      color: Color(0xFFffd700),
       strokeWidth: 1.5,
     ));
-  }
-  
-  // Business Card Template
-  void _loadBusinessCardTemplate() {
-    // Card background
+    
+    // Decorative geometric element
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(100, 150, 400, 250),
-      color: Colors.teal.shade400,
+      bounds: const Rect.fromLTWH(150, 150, 500, 8),
+      color: Color(0xFFffd700),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Name
-    _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'John Doe',
-      bounds: const Rect.fromLTWH(150, 220, 300, 50),
-      color: Colors.white,
-      strokeWidth: 2,
-    ));
-    
-    // Title
-    _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'CEO & Founder',
-      bounds: const Rect.fromLTWH(150, 280, 300, 35),
-      color: Colors.white70,
-      strokeWidth: 1.5,
-    ));
-    
-    // Decorative element
+    // Accent circle
     _elements.add(CanvasElement(
       type: ElementType.circle,
-      bounds: const Rect.fromLTWH(420, 170, 60, 60),
-      color: Colors.white,
-      strokeWidth: 2,
-    ));
-  }
-  
-  // YouTube Thumbnail Template
-  void _loadYouTubeThumbnailTemplate() {
-    // Background
-    _elements.add(CanvasElement(
-      type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 100, 500, 280),
-      color: Colors.red.shade400,
-      strokeWidth: 0,
-      filled: true,
-    ));
-    
-    // Title
-    _elements.add(CanvasElement(
-      type: ElementType.text,
-      text: 'VIDEO TITLE',
-      bounds: const Rect.fromLTWH(100, 200, 400, 60),
-      color: Colors.white,
-      strokeWidth: 2,
-    ));
-    
-    // Play button circle
-    _elements.add(CanvasElement(
-      type: ElementType.circle,
-      bounds: const Rect.fromLTWH(450, 280, 80, 80),
-      color: Colors.white,
+      bounds: const Rect.fromLTWH(350, 250, 120, 120),
+      color: Color(0xFFffd700),
       strokeWidth: 4,
     ));
   }
   
-  // Twitter Post Template
-  void _loadTwitterPostTemplate() {
-    // Background
+  // Product Flyer Template - Professional Design
+  void _loadProductFlyerTemplate() {
+    // Modern gradient background
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 50, 400, 300),
-      color: Colors.lightBlue.shade300,
+      bounds: const Rect.fromLTWH(50, 50, 850, 1100),
+      color: Color(0xFF141e30),
       strokeWidth: 0,
       filled: true,
     ));
     
-    // Tweet text
+    // Top accent bar
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 850, 15),
+      color: Color(0xFFff6b6b),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Product showcase area
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(150, 200, 650, 450),
+      color: Colors.white,
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Product name (bold headline)
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Your Tweet Here',
-      bounds: const Rect.fromLTWH(100, 140, 300, 50),
+      text: 'PREMIUM PRODUCT',
+      bounds: const Rect.fromLTWH(150, 700, 650, 90),
       color: Colors.white,
+      strokeWidth: 3.5,
+    ));
+    
+    // Product tagline
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Innovation Meets Excellence',
+      bounds: const Rect.fromLTWH(150, 810, 650, 60),
+      color: Color(0xFFff6b6b),
       strokeWidth: 2,
     ));
     
-    // Hashtag
+    // Features/description
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: '#YourHashtag',
-      bounds: const Rect.fromLTWH(100, 200, 300, 35),
-      color: Colors.white70,
+      text: '✓ Premium Quality  ✓ Lifetime Warranty  ✓ Free Shipping',
+      bounds: const Rect.fromLTWH(150, 900, 650, 50),
+      color: Color(0xFFe8e8e8),
       strokeWidth: 1.5,
+    ));
+    
+    // Price badge
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(700, 150, 150, 150),
+      color: Color(0xFFff6b6b),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Decorative corner element
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(150, 1000, 300, 6),
+      color: Color(0xFFff6b6b),
+      strokeWidth: 0,
+      filled: true,
     ));
   }
   
-  // Email Header Template
-  void _loadEmailHeaderTemplate() {
-    // Background
+  // Business Card Template - Professional Design
+  void _loadBusinessCardTemplate() {
+    // Card background (elegant dark)
     _elements.add(CanvasElement(
       type: ElementType.rectangle,
-      bounds: const Rect.fromLTWH(50, 100, 500, 180),
-      color: Colors.indigo.shade400,
+      bounds: const Rect.fromLTWH(200, 250, 1000, 600),
+      color: Color(0xFF1a1a2e),
       strokeWidth: 0,
       filled: true,
+    ));
+    
+    // Gold accent strip (left side)
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(200, 250, 15, 600),
+      color: Color(0xFFd4af37),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Name (large, prominent)
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'MICHAEL CHEN',
+      bounds: const Rect.fromLTWH(280, 380, 650, 80),
+      color: Colors.white,
+      strokeWidth: 3,
+    ));
+    
+    // Title/position
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Chief Executive Officer',
+      bounds: const Rect.fromLTWH(280, 480, 650, 50),
+      color: Color(0xFFd4af37),
+      strokeWidth: 2,
     ));
     
     // Company name
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Company Name',
-      bounds: const Rect.fromLTWH(100, 150, 400, 50),
+      text: 'Global Enterprises Inc.',
+      bounds: const Rect.fromLTWH(280, 550, 650, 40),
+      color: Color(0xFFb8b8b8),
+      strokeWidth: 1.5,
+    ));
+    
+    // Contact info
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'michael.chen@company.com | +1 (555) 123-4567',
+      bounds: const Rect.fromLTWH(280, 720, 650, 35),
+      color: Color(0xFF888888),
+      strokeWidth: 1.2,
+    ));
+    
+    // Decorative circle (logo placeholder)
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(1000, 300, 120, 120),
+      color: Color(0xFFd4af37),
+      strokeWidth: 3,
+    ));
+  }
+  
+  // YouTube Thumbnail Template - Professional Design
+  void _loadYouTubeThumbnailTemplate() {
+    // Bold background (YouTube red gradient)
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 1280, 720),
+      color: Color(0xFFc4302b),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Dark overlay for contrast
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 400, 1280, 370),
+      color: Color(0xFF1a1a1a),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Main title (large, eye-catching)
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'ULTIMATE GUIDE',
+      bounds: const Rect.fromLTWH(150, 500, 980, 120),
       color: Colors.white,
+      strokeWidth: 4,
+    ));
+    
+    // Subtitle/hook
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Everything You Need to Know in 2026',
+      bounds: const Rect.fromLTWH(150, 640, 980, 60),
+      color: Color(0xFFffd700),
       strokeWidth: 2,
+    ));
+    
+    // Play button circle (iconic YouTube element)
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(950, 150, 250, 250),
+      color: Colors.white,
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Play button inner circle
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(980, 180, 190, 190),
+      color: Color(0xFFc4302b),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Accent elements
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(150, 450, 200, 12),
+      color: Color(0xFFffd700),
+      strokeWidth: 0,
+      filled: true,
+    ));
+  }
+  
+  // Twitter Post Template - Professional Design
+  void _loadTwitterPostTemplate() {
+    // Clean white background (Twitter style)
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 1200, 675),
+      color: Colors.white,
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Blue accent header
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 50, 1200, 150),
+      color: Color(0xFF1da1f2),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Main tweet text (bold statement)
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Breaking: Major Announcement',
+      bounds: const Rect.fromLTWH(150, 280, 900, 90),
+      color: Color(0xFF14171a),
+      strokeWidth: 3,
+    ));
+    
+    // Supporting text
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'Join the conversation and share your thoughts',
+      bounds: const Rect.fromLTWH(150, 390, 900, 60),
+      color: Color(0xFF657786),
+      strokeWidth: 1.8,
+    ));
+    
+    // Hashtag section
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: '#Trending #Innovation #2026',
+      bounds: const Rect.fromLTWH(150, 500, 900, 50),
+      color: Color(0xFF1da1f2),
+      strokeWidth: 2,
+    ));
+    
+    // Profile circle placeholder
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(1000, 280, 150, 150),
+      color: Color(0xFF1da1f2),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Decorative accent line
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(150, 600, 400, 5),
+      color: Color(0xFF1da1f2),
+      strokeWidth: 0,
+      filled: true,
+    ));
+  }
+  
+  // Email Header Template - Professional Design
+  void _loadEmailHeaderTemplate() {
+    // Professional gradient background
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 100, 1400, 300),
+      color: Color(0xFF2c3e50),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Top accent bar
+    _elements.add(CanvasElement(
+      type: ElementType.rectangle,
+      bounds: const Rect.fromLTWH(50, 100, 1400, 8),
+      color: Color(0xFF3498db),
+      strokeWidth: 0,
+      filled: true,
+    ));
+    
+    // Company name (large, professional)
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'ENTERPRISE SOLUTIONS',
+      bounds: const Rect.fromLTWH(150, 180, 1100, 80),
+      color: Colors.white,
+      strokeWidth: 3,
     ));
     
     // Tagline
     _elements.add(CanvasElement(
       type: ElementType.text,
-      text: 'Your tagline here',
-      bounds: const Rect.fromLTWH(100, 210, 400, 35),
-      color: Colors.white70,
-      strokeWidth: 1.5,
+      text: 'Delivering Excellence in Every Solution',
+      bounds: const Rect.fromLTWH(150, 280, 1100, 50),
+      color: Color(0xFF3498db),
+      strokeWidth: 2,
+    ));
+    
+    // Contact info
+    _elements.add(CanvasElement(
+      type: ElementType.text,
+      text: 'www.company.com | contact@company.com',
+      bounds: const Rect.fromLTWH(150, 350, 1100, 35),
+      color: Color(0xFFb8b8b8),
+      strokeWidth: 1.3,
+    ));
+    
+    // Logo placeholder circle
+    _elements.add(CanvasElement(
+      type: ElementType.circle,
+      bounds: const Rect.fromLTWH(1300, 200, 100, 100),
+      color: Color(0xFF3498db),
+      strokeWidth: 4,
     ));
   }
   
