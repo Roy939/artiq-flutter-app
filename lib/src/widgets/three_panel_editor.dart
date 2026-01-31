@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'dart:html' as html;
 import 'package:artiq_flutter/src/widgets/left_tools_panel.dart';
 import 'package:artiq_flutter/src/widgets/interactive_canvas.dart';
 import 'package:artiq_flutter/src/widgets/right_properties_panel.dart';
@@ -84,6 +86,93 @@ class ThreePanelEditor extends StatelessWidget {
         title: const Text('ARTIQ Editor'),
         backgroundColor: Colors.deepPurple,
         actions: [
+          // Upload Image button
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                
+                // Create file input element
+                final input = html.FileUploadInputElement()..accept = 'image/*';
+                input.click();
+                
+                input.onChange.listen((e) async {
+                  final files = input.files;
+                  if (files != null && files.isNotEmpty) {
+                    final file = files[0];
+                    final reader = html.FileReader();
+                    
+                    reader.onLoadEnd.listen((e) async {
+                      try {
+                        final dataUrl = reader.result as String;
+                        // Extract base64 data (remove data:image/...;base64, prefix)
+                        final base64Data = dataUrl.split(',')[1];
+                        
+                        // Add image to canvas at center
+                        canvasState.addImage(
+                          base64Data,
+                          const Offset(440, 440), // Center of 1080x1080 canvas
+                          width: 200,
+                          height: 200,
+                        );
+                        
+                        // Show success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: const [
+                                Icon(Icons.check_circle, color: Colors.white),
+                                SizedBox(width: 12),
+                                Text('🖼️ Image uploaded successfully!'),
+                              ],
+                            ),
+                            backgroundColor: Colors.blue,
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      } catch (e) {
+                        // Show error message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.error, color: Colors.white),
+                                const SizedBox(width: 12),
+                                Text('Upload failed: $e'),
+                              ],
+                            ),
+                            backgroundColor: Colors.red,
+                            duration: const Duration(seconds: 3),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      }
+                    });
+                    
+                    reader.readAsDataUrl(file);
+                  }
+                });
+              },
+              icon: const Icon(Icons.upload_file, size: 18),
+              label: const Text('Upload Image'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
           // Export button
           Padding(
             padding: const EdgeInsets.only(right: 16),

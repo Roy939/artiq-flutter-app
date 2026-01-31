@@ -20,6 +20,7 @@ enum ElementType {
   circle,
   line,
   text,
+  image,
 }
 
 /// Represents a drawing element on the canvas
@@ -32,6 +33,7 @@ class CanvasElement {
   final double strokeWidth;
   final String text; // For text elements
   final bool filled;
+  final String? imageData; // Base64 image data for image elements
   
   CanvasElement({
     String? id,
@@ -42,6 +44,7 @@ class CanvasElement {
     this.strokeWidth = 2.0,
     this.text = '',
     this.filled = false,
+    this.imageData,
   })  : id = id ?? _uuid.v4(),
         points = points ?? [],
         bounds = bounds ?? Rect.zero;
@@ -55,6 +58,7 @@ class CanvasElement {
     double? strokeWidth,
     String? text,
     bool? filled,
+    String? imageData,
   }) {
     return CanvasElement(
       id: id ?? this.id,
@@ -65,6 +69,7 @@ class CanvasElement {
       strokeWidth: strokeWidth ?? this.strokeWidth,
       text: text ?? this.text,
       filled: filled ?? this.filled,
+      imageData: imageData ?? this.imageData,
     );
   }
 }
@@ -191,6 +196,19 @@ class CanvasStateProvider extends ChangeNotifier {
       text: text,
       bounds: Rect.fromLTWH(position.dx, position.dy, 200, 50),
       color: _currentColor,
+    ));
+    _redoStack.clear();
+    notifyListeners();
+  }
+  
+  // Add image
+  void addImage(String base64Data, Offset position, {double width = 200, double height = 200}) {
+    _saveState();
+    _elements.add(CanvasElement(
+      type: ElementType.image,
+      imageData: base64Data,
+      bounds: Rect.fromLTWH(position.dx, position.dy, width, height),
+      color: Colors.transparent,
     ));
     _redoStack.clear();
     notifyListeners();

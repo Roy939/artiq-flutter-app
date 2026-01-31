@@ -110,6 +110,34 @@ class CanvasExportUtil {
         ctx.textBaseline = 'top';
         ctx.fillText(element.text, element.bounds.left, element.bounds.top);
         break;
+        
+      case ElementType.image:
+        // Draw image from base64 data
+        if (element.imageData != null && element.imageData!.isNotEmpty) {
+          final img = html.ImageElement();
+          img.src = 'data:image/png;base64,${element.imageData}';
+          // Note: For synchronous export, image must be loaded first
+          // This is a limitation - images may not appear in export
+          try {
+            ctx.drawImageScaled(
+              img,
+              element.bounds.left,
+              element.bounds.top,
+              element.bounds.width,
+              element.bounds.height,
+            );
+          } catch (e) {
+            // If image not loaded, draw placeholder
+            ctx.fillStyle = '#CCCCCC';
+            ctx.fillRect(
+              element.bounds.left,
+              element.bounds.top,
+              element.bounds.width,
+              element.bounds.height,
+            );
+          }
+        }
+        break;
     }
     
     ctx.restore();

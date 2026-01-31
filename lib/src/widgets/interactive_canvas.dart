@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:ui' as ui;
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:artiq_flutter/src/providers/canvas_state_provider.dart';
 
 /// Interactive canvas that supports drawing, clicking to add elements, and dragging to move them
@@ -174,6 +177,7 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
 /// Custom painter for rendering canvas elements
 class CanvasPainter extends CustomPainter {
   final CanvasStateProvider canvasState;
+  final Map<String, ui.Image> _imageCache = {};
 
   CanvasPainter(this.canvasState) : super(repaint: canvasState);
 
@@ -247,6 +251,49 @@ class CanvasPainter extends CustomPainter {
         textPainter.layout();
         textPainter.paint(canvas, element.bounds.topLeft);
         break;
+      case ElementType.image:
+        // Draw image if available, otherwise placeholder
+        if (element.imageData != null && element.imageData!.isNotEmpty) {
+          // Try to get from cache
+          final cachedImage = _imageCache[element.id];
+          if (cachedImage != null) {
+            canvas.drawImageRect(
+              cachedImage,
+              Rect.fromLTWH(0, 0, cachedImage.width.toDouble(), cachedImage.height.toDouble()),
+              element.bounds,
+              Paint(),
+            );
+          } else {
+            // Load image asynchronously
+            _loadImage(element.id, element.imageData!);
+            // Draw placeholder while loading
+            final placeholderPaint = Paint()
+              ..color = Colors.grey.withOpacity(0.3)
+              ..style = PaintingStyle.fill;
+            canvas.drawRect(element.bounds, placeholderPaint);
+          }
+        } else {
+          // Draw placeholder for missing image data
+          final placeholderPaint = Paint()
+            ..color = Colors.grey.withOpacity(0.3)
+            ..style = PaintingStyle.fill;
+          canvas.drawRect(element.bounds, placeholderPaint);
+        }
+        break;
+    }
+  }
+
+  /// Load image from base64 data
+  Future<void> _loadImage(String id, String base64Data) async {
+    try {
+      final bytes = base64Decode(base64Data);
+      final codec = await ui.instantiateImageCodec(bytes);
+      final frame = await codec.getNextFrame();
+      _imageCache[id] = frame.image;
+      // Trigger repaint
+      canvasState.notifyListeners();
+    } catch (e) {
+      print('Error loading image: $e');
     }
   }
 
