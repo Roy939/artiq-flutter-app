@@ -116,6 +116,11 @@ class CanvasStateProvider extends ChangeNotifier {
   Offset _resizeStartPoint = Offset.zero;
   Rect _resizeStartBounds = Rect.zero;
   
+  // Line drawing state
+  bool _isDrawingLine = false;
+  Offset _lineStartPoint = Offset.zero;
+  Offset _lineEndPoint = Offset.zero;
+  
   // Getters
   DrawingTool get selectedTool => _selectedTool;
   List<CanvasElement> get elements => List.unmodifiable(_elements);
@@ -126,6 +131,9 @@ class CanvasStateProvider extends ChangeNotifier {
   bool get canRedo => _redoStack.isNotEmpty;
   int get selectedElementIndex => _selectedElementIndex;
   bool get isResizing => _isResizing;
+  bool get isDrawingLine => _isDrawingLine;
+  Offset get lineStartPoint => _lineStartPoint;
+  Offset get lineEndPoint => _lineEndPoint;
   
   // Select tool
   void selectTool(DrawingTool tool) {
@@ -198,17 +206,36 @@ class CanvasStateProvider extends ChangeNotifier {
     notifyListeners();
   }
   
-  // Add line
-  void addLine(Offset position) {
-    _saveState();
-    _elements.add(CanvasElement(
-      type: ElementType.line,
-      bounds: Rect.fromPoints(position, position + const Offset(100, 100)),
-      color: _currentColor,
-      strokeWidth: _currentStrokeWidth,
-    ));
-    _redoStack.clear();
+  // Start drawing line
+  void startLine(Offset position) {
+    _isDrawingLine = true;
+    _lineStartPoint = position;
+    _lineEndPoint = position;
     notifyListeners();
+  }
+  
+  // Update line end point while dragging
+  void updateLine(Offset position) {
+    if (_isDrawingLine) {
+      _lineEndPoint = position;
+      notifyListeners();
+    }
+  }
+  
+  // Finish drawing line
+  void finishLine() {
+    if (_isDrawingLine) {
+      _saveState();
+      _elements.add(CanvasElement(
+        type: ElementType.line,
+        bounds: Rect.fromPoints(_lineStartPoint, _lineEndPoint),
+        color: _currentColor,
+        strokeWidth: _currentStrokeWidth,
+      ));
+      _isDrawingLine = false;
+      _redoStack.clear();
+      notifyListeners();
+    }
   }
   
   // Add text

@@ -73,6 +73,12 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
           return;
         }
         
+        // Handle line drawing
+        if (canvasState.isDrawingLine) {
+          canvasState.updateLine(details.localPosition);
+          return;
+        }
+        
         if (_selectedElementIndex != null && _dragStart != null) {
           // Drag the selected element
           final delta = details.localPosition - _dragStart!;
@@ -87,6 +93,12 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
         // End resizing if in resize mode
         if (canvasState.isResizing) {
           canvasState.endResize();
+          return;
+        }
+        
+        // End line drawing if in line drawing mode
+        if (canvasState.isDrawingLine) {
+          canvasState.finishLine();
           return;
         }
         
@@ -167,7 +179,7 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
         canvasState.addCircle(position);
         break;
       case DrawingTool.line:
-        canvasState.addLine(position);
+        canvasState.startLine(position);
         break;
       case DrawingTool.text:
         _showTextDialog(context, canvasState, position);
@@ -241,6 +253,20 @@ class CanvasPainter extends CustomPainter {
         path.lineTo(point.dx, point.dy);
       }
       canvas.drawPath(path, paint);
+    }
+    
+    // Paint line being drawn (real-time preview)
+    if (canvasState.isDrawingLine) {
+      final paint = Paint()
+        ..color = canvasState.currentColor
+        ..strokeWidth = canvasState.currentStrokeWidth
+        ..style = PaintingStyle.stroke;
+      
+      canvas.drawLine(
+        canvasState.lineStartPoint,
+        canvasState.lineEndPoint,
+        paint,
+      );
     }
     
     // Draw selection and resize handles for selected element
