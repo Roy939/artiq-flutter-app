@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/artiq-flutter-app/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="ARTIQ - AI-powered design and creation tool">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="ARTIQ">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>ARTIQ</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    flutter-view {
+      width: 100% !important;
+      height: 100% !important;
+      display: block !important;
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  
+  <!-- Firebase Configuration -->
+  <script src="firebase-config.js"></script>
+  
+  <script>
+    // Initialize Firebase
+    if (window.firebaseConfig) {
+      firebase.initializeApp(window.firebaseConfig);
+      console.log('Firebase initialized successfully');
+    } else {
+      console.error('Firebase config not found!');
+    }
+  </script>
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    const serviceWorkerVersion = "3742356164";
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+</head>
+<body>
+  <script>
+    window.addEventListener('load', function(ev) {
+      console.log('Page loaded, initializing Flutter...');
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          console.log('Flutter entrypoint loaded, initializing engine...');
+          // Initialize engine with semantics enabled by default
+          engineInitializer.initializeEngine({
+            hostElement: document.body,
+            // Enable semantics for accessibility and interactivity
+            renderer: "html"
+          }).then(function(appRunner) {
+            console.log('Flutter engine initialized, running app...');
+            appRunner.runApp();
+            console.log('Flutter app started!');
+          }).catch(function(error) {
+            console.error('Error initializing Flutter engine:', error);
+          });
+        }
+      }).catch(function(error) {
+        console.error('Error loading Flutter entrypoint:', error);
+      });
+    });
+    
+    // Catch any unhandled errors
+    window.addEventListener('error', function(event) {
+      console.error('Global error:', event.error);
+    });
+  </script>
+</body>
+</html>
