@@ -93,6 +93,7 @@ class CanvasStateProvider extends ChangeNotifier {
   // Getters
   DrawingTool get selectedTool => _selectedTool;
   List<CanvasElement> get elements => List.unmodifiable(_elements);
+  List<Offset> get currentPath => List.unmodifiable(_currentPath);
   Color get currentColor => _currentColor;
   double get currentStrokeWidth => _currentStrokeWidth;
   bool get canUndo => _undoStack.isNotEmpty;

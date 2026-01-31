@@ -92,7 +92,19 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
   }
 
   bool _isPositionInElement(CanvasElement element, Offset position) {
-    // Simple bounding box check
+    // For path elements, check if position is near any point in the path
+    if (element.type == ElementType.path && element.points.isNotEmpty) {
+      const threshold = 10.0; // Distance threshold for hit detection
+      for (final point in element.points) {
+        final distance = (point - position).distance;
+        if (distance < threshold) {
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    // For other elements, use simple bounding box check
     final bounds = element.bounds;
     return position.dx >= bounds.left &&
         position.dx <= bounds.right &&
@@ -167,8 +179,24 @@ class CanvasPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Paint all completed elements
     for (final element in canvasState.elements) {
       _paintElement(canvas, element);
+    }
+    
+    // Paint current path being drawn (real-time preview)
+    if (canvasState.currentPath.length > 1) {
+      final paint = Paint()
+        ..color = canvasState.currentColor
+        ..strokeWidth = canvasState.currentStrokeWidth
+        ..style = PaintingStyle.stroke;
+      
+      final path = Path();
+      path.moveTo(canvasState.currentPath.first.dx, canvasState.currentPath.first.dy);
+      for (final point in canvasState.currentPath.skip(1)) {
+        path.lineTo(point.dx, point.dy);
+      }
+      canvas.drawPath(path, paint);
     }
   }
 
