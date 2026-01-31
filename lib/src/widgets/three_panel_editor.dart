@@ -4,6 +4,7 @@ import 'package:artiq_flutter/src/widgets/left_tools_panel.dart';
 import 'package:artiq_flutter/src/widgets/interactive_canvas.dart';
 import 'package:artiq_flutter/src/widgets/right_properties_panel.dart';
 import 'package:artiq_flutter/src/providers/canvas_state_provider.dart';
+import 'package:artiq_flutter/src/utils/canvas_export_util.dart';
 
 /// Three-panel editor layout: left tools, center canvas, right properties
 class ThreePanelEditor extends StatelessWidget {
@@ -83,6 +84,70 @@ class ThreePanelEditor extends StatelessWidget {
         title: const Text('ARTIQ Editor'),
         backgroundColor: Colors.deepPurple,
         actions: [
+          // Export button
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                
+                try {
+                  await CanvasExportUtil.exportToPNG(
+                    elements: canvasState.elements,
+                    filename: 'artiq_design_${DateTime.now().millisecondsSinceEpoch}',
+                  );
+                  
+                  // Show success message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: const [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 12),
+                          Text('✅ Design exported successfully!'),
+                        ],
+                      ),
+                      backgroundColor: Colors.green,
+                      duration: const Duration(seconds: 2),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  // Show error message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(Icons.error, color: Colors.white),
+                          const SizedBox(width: 12),
+                          Text('Export failed: $e'),
+                        ],
+                      ),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.download, size: 18),
+              label: const Text('Export PNG'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
           // Templates dropdown button
           Padding(
             padding: const EdgeInsets.only(right: 16),
