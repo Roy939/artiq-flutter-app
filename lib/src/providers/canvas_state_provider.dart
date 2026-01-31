@@ -37,6 +37,7 @@ class CanvasElement {
   final double fontSize; // Font size for text elements
   final String fontFamily; // Font family for text elements
   final FontWeight fontWeight; // Font weight for text elements
+  final double rotation; // Rotation angle in radians
   
   CanvasElement({
     String? id,
@@ -51,6 +52,7 @@ class CanvasElement {
     this.fontSize = 24.0,
     this.fontFamily = 'Arial',
     this.fontWeight = FontWeight.bold,
+    this.rotation = 0.0,
   })  : id = id ?? _uuid.v4(),
         points = points ?? [],
         bounds = bounds ?? Rect.zero;
@@ -68,6 +70,7 @@ class CanvasElement {
     double? fontSize,
     String? fontFamily,
     FontWeight? fontWeight,
+    double? rotation,
   }) {
     return CanvasElement(
       id: id ?? this.id,
@@ -82,6 +85,7 @@ class CanvasElement {
       fontSize: fontSize ?? this.fontSize,
       fontFamily: fontFamily ?? this.fontFamily,
       fontWeight: fontWeight ?? this.fontWeight,
+      rotation: rotation ?? this.rotation,
     );
   }
 }
@@ -121,6 +125,11 @@ class CanvasStateProvider extends ChangeNotifier {
   Offset _lineStartPoint = Offset.zero;
   Offset _lineEndPoint = Offset.zero;
   
+  // Rotation state
+  bool _isRotating = false;
+  double _rotationStartAngle = 0.0;
+  double _elementStartRotation = 0.0;
+  
   // Getters
   DrawingTool get selectedTool => _selectedTool;
   List<CanvasElement> get elements => List.unmodifiable(_elements);
@@ -134,6 +143,7 @@ class CanvasStateProvider extends ChangeNotifier {
   bool get isDrawingLine => _isDrawingLine;
   Offset get lineStartPoint => _lineStartPoint;
   Offset get lineEndPoint => _lineEndPoint;
+  bool get isRotating => _isRotating;
   
   // Select tool
   void selectTool(DrawingTool tool) {
@@ -370,6 +380,44 @@ class CanvasStateProvider extends ChangeNotifier {
       _saveState();
       _isResizing = false;
       _resizeHandle = '';
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Start rotating
+  void startRotate(Offset position) {
+    if (_selectedElementIndex >= 0 && _selectedElementIndex < _elements.length) {
+      final element = _elements[_selectedElementIndex];
+      final center = element.bounds.center;
+      
+      _isRotating = true;
+      _rotationStartAngle = (position - center).direction;
+      _elementStartRotation = element.rotation;
+      notifyListeners();
+    }
+  }
+  
+  // Update rotation
+  void updateRotate(Offset position) {
+    if (_isRotating && _selectedElementIndex >= 0 && _selectedElementIndex < _elements.length) {
+      final element = _elements[_selectedElementIndex];
+      final center = element.bounds.center;
+      
+      final currentAngle = (position - center).direction;
+      final angleDelta = currentAngle - _rotationStartAngle;
+      final newRotation = _elementStartRotation + angleDelta;
+      
+      _elements[_selectedElementIndex] = element.copyWith(rotation: newRotation);
+      notifyListeners();
+    }
+  }
+  
+  // End rotating
+  void endRotate() {
+    if (_isRotating) {
+      _saveState();
+      _isRotating = false;
       _redoStack.clear();
       notifyListeners();
     }

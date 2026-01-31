@@ -34,8 +34,14 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
           return;
         }
         
-        // Check if clicking on a resize handle of selected element
+        // Check if clicking on rotation handle of selected element
         if (canvasState.selectedElementIndex >= 0) {
+          if (_isPositionOnRotationHandle(canvasState.elements[canvasState.selectedElementIndex], position)) {
+            canvasState.startRotate(position);
+            return;
+          }
+          
+          // Check if clicking on a resize handle of selected element
           final handle = _getResizeHandleAt(canvasState.elements[canvasState.selectedElementIndex], position);
           if (handle != null) {
             canvasState.startResize(handle, position);
@@ -67,6 +73,12 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
           return;
         }
         
+        // Handle rotating
+        if (canvasState.isRotating) {
+          canvasState.updateRotate(details.localPosition);
+          return;
+        }
+        
         // Handle resizing
         if (canvasState.isResizing) {
           canvasState.updateResize(details.localPosition);
@@ -90,6 +102,12 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
         }
       },
       onPanEnd: (details) {
+        // End rotating if in rotate mode
+        if (canvasState.isRotating) {
+          canvasState.endRotate();
+          return;
+        }
+        
         // End resizing if in resize mode
         if (canvasState.isResizing) {
           canvasState.endResize();
@@ -165,6 +183,23 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
     if ((position - bounds.bottomRight).distance < handleSize) return 'br';
     
     return null;
+  }
+  
+  bool _isPositionOnRotationHandle(CanvasElement element, Offset position) {
+    // Only rotatable for elements with bounds (not paths)
+    if (element.type == ElementType.path) return null;
+    
+    const handleSize = 10.0;
+    final bounds = element.bounds;
+    final rotationHandleOffset = 30.0; // Distance above the element
+    
+    // Rotation handle is above the center of the element
+    final rotationHandlePos = Offset(
+      bounds.center.dx,
+      bounds.top - rotationHandleOffset,
+    );
+    
+    return (position - rotationHandlePos).distance < handleSize;
   }
 
   void _handleAddElement(CanvasStateProvider canvasState, Offset position) {
@@ -286,6 +321,15 @@ class CanvasPainter extends CustomPainter {
       ..color = element.color
       ..strokeWidth = element.strokeWidth
       ..style = element.filled ? PaintingStyle.fill : PaintingStyle.stroke;
+    
+    // Apply rotation if element has rotation
+    if (element.rotation != 0.0 && element.type != ElementType.path) {
+      canvas.save();
+      final center = element.bounds.center;
+      canvas.translate(center.dx, center.dy);
+      canvas.rotate(element.rotation);
+      canvas.translate(-center.dx, -center.dy);
+    }
 
     switch (element.type) {
       case ElementType.path:
@@ -359,6 +403,11 @@ class CanvasPainter extends CustomPainter {
         }
         break;
     }
+    
+    // Restore canvas if rotation was applied
+    if (element.rotation != 0.0 && element.type != ElementType.path) {
+      canvas.restore();
+    }
   }
 
   /// Draw selection border and resize handles
@@ -394,6 +443,37 @@ class CanvasPainter extends CustomPainter {
         ..style = PaintingStyle.stroke;
       canvas.drawCircle(handle, handleSize / 2, whiteBorder);
     }
+    
+    // Draw rotation handle above the element
+    const rotationHandleOffset = 30.0;
+    final rotationHandlePos = Offset(
+      bounds.center.dx,
+      bounds.top - rotationHandleOffset,
+    );
+    
+    // Draw line connecting rotation handle to element
+    final linePaint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+    canvas.drawLine(
+      Offset(bounds.center.dx, bounds.top),
+      rotationHandlePos,
+      linePaint,
+    );
+    
+    // Draw rotation handle (circular with rotation icon)
+    final rotationHandlePaint = Paint()
+      ..color = Colors.green
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(rotationHandlePos, handleSize / 2, rotationHandlePaint);
+    
+    // Draw white border around rotation handle
+    final rotationBorder = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+    canvas.drawCircle(rotationHandlePos, handleSize / 2, rotationBorder);
   }
   
   /// Load image from base64 data
