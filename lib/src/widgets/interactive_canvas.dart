@@ -22,6 +22,15 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
       onPanStart: (details) {
         final position = details.localPosition;
         
+        // If eraser is selected, remove element immediately
+        if (canvasState.selectedTool == DrawingTool.eraser) {
+          final index = _findElementAtPosition(canvasState, position);
+          if (index != null) {
+            canvasState.removeElement(index);
+          }
+          return;
+        }
+        
         // Check if user clicked on an existing element
         _selectedElementIndex = _findElementAtPosition(canvasState, position);
         
@@ -34,6 +43,15 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
         }
       },
       onPanUpdate: (details) {
+        // If eraser is selected, continue erasing elements as we drag
+        if (canvasState.selectedTool == DrawingTool.eraser) {
+          final index = _findElementAtPosition(canvasState, details.localPosition);
+          if (index != null) {
+            canvasState.removeElement(index);
+          }
+          return;
+        }
+        
         if (_selectedElementIndex != null && _dragStart != null) {
           // Drag the selected element
           final delta = details.localPosition - _dragStart!;
