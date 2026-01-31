@@ -550,6 +550,54 @@ class CanvasStateProvider extends ChangeNotifier {
     notifyListeners();
   }
   
+  // Bring element to front (move to end of list)
+  void bringToFront(int index) {
+    if (index >= 0 && index < _elements.length && index != _elements.length - 1) {
+      _saveState();
+      final element = _elements.removeAt(index);
+      _elements.add(element);
+      _selectedElementIndex = _elements.length - 1;
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Send element to back (move to start of list)
+  void sendToBack(int index) {
+    if (index >= 0 && index < _elements.length && index != 0) {
+      _saveState();
+      final element = _elements.removeAt(index);
+      _elements.insert(0, element);
+      _selectedElementIndex = 0;
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Move element forward (swap with next element)
+  void moveForward(int index) {
+    if (index >= 0 && index < _elements.length - 1) {
+      _saveState();
+      final element = _elements.removeAt(index);
+      _elements.insert(index + 1, element);
+      _selectedElementIndex = index + 1;
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Move element backward (swap with previous element)
+  void moveBackward(int index) {
+    if (index > 0 && index < _elements.length) {
+      _saveState();
+      final element = _elements.removeAt(index);
+      _elements.insert(index - 1, element);
+      _selectedElementIndex = index - 1;
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
   // Clear canvas
   void clearCanvas() {
     _saveState();

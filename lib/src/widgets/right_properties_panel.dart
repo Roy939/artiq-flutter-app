@@ -203,6 +203,74 @@ class RightPropertiesPanel extends StatelessWidget {
                         
                         const SizedBox(height: 12),
                         
+                        // Layer controls
+                        const Text(
+                          'Layer Order',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => canvasState.bringToFront(canvasState.selectedElementIndex),
+                                icon: const Icon(Icons.flip_to_front, size: 14),
+                                label: const Text('Front', style: TextStyle(fontSize: 11)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => canvasState.moveForward(canvasState.selectedElementIndex),
+                                icon: const Icon(Icons.arrow_upward, size: 14),
+                                label: const Text('Up', style: TextStyle(fontSize: 11)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal[300],
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => canvasState.sendToBack(canvasState.selectedElementIndex),
+                                icon: const Icon(Icons.flip_to_back, size: 14),
+                                label: const Text('Back', style: TextStyle(fontSize: 11)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey[600],
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => canvasState.moveBackward(canvasState.selectedElementIndex),
+                                icon: const Icon(Icons.arrow_downward, size: 14),
+                                label: const Text('Down', style: TextStyle(fontSize: 11)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey[400],
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        
                         // Stroke width for selected element
                         if (canvasState.elements[canvasState.selectedElementIndex].type != ElementType.text &&
                             canvasState.elements[canvasState.selectedElementIndex].type != ElementType.image)
