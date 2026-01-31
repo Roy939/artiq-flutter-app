@@ -95,6 +95,15 @@ class CanvasStateProvider extends ChangeNotifier {
   // Current stroke width
   double _currentStrokeWidth = 2.0;
   
+  // Selected element index (-1 means none selected)
+  int _selectedElementIndex = -1;
+  
+  // Resize state
+  bool _isResizing = false;
+  String _resizeHandle = ''; // 'tl', 'tr', 'bl', 'br' for corners
+  Offset _resizeStartPoint = Offset.zero;
+  Rect _resizeStartBounds = Rect.zero;
+  
   // Getters
   DrawingTool get selectedTool => _selectedTool;
   List<CanvasElement> get elements => List.unmodifiable(_elements);
@@ -103,6 +112,8 @@ class CanvasStateProvider extends ChangeNotifier {
   double get currentStrokeWidth => _currentStrokeWidth;
   bool get canUndo => _undoStack.isNotEmpty;
   bool get canRedo => _redoStack.isNotEmpty;
+  int get selectedElementIndex => _selectedElementIndex;
+  bool get isResizing => _isResizing;
   
   // Select tool
   void selectTool(DrawingTool tool) {
@@ -234,6 +245,92 @@ class CanvasStateProvider extends ChangeNotifier {
     if (index >= 0 && index < _elements.length) {
       _saveState();
       _elements.removeAt(index);
+      if (_selectedElementIndex == index) {
+        _selectedElementIndex = -1;
+      } else if (_selectedElementIndex > index) {
+        _selectedElementIndex--;
+      }
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Select element
+  void selectElement(int index) {
+    if (index >= -1 && index < _elements.length) {
+      _selectedElementIndex = index;
+      notifyListeners();
+    }
+  }
+  
+  // Start resizing
+  void startResize(String handle, Offset point) {
+    if (_selectedElementIndex >= 0 && _selectedElementIndex < _elements.length) {
+      _isResizing = true;
+      _resizeHandle = handle;
+      _resizeStartPoint = point;
+      _resizeStartBounds = _elements[_selectedElementIndex].bounds;
+      notifyListeners();
+    }
+  }
+  
+  // Update resize
+  void updateResize(Offset currentPoint) {
+    if (!_isResizing || _selectedElementIndex < 0) return;
+    
+    final delta = currentPoint - _resizeStartPoint;
+    final element = _elements[_selectedElementIndex];
+    Rect newBounds = _resizeStartBounds;
+    
+    // Calculate new bounds based on which handle is being dragged
+    switch (_resizeHandle) {
+      case 'tl': // Top-left
+        newBounds = Rect.fromLTRB(
+          _resizeStartBounds.left + delta.dx,
+          _resizeStartBounds.top + delta.dy,
+          _resizeStartBounds.right,
+          _resizeStartBounds.bottom,
+        );
+        break;
+      case 'tr': // Top-right
+        newBounds = Rect.fromLTRB(
+          _resizeStartBounds.left,
+          _resizeStartBounds.top + delta.dy,
+          _resizeStartBounds.right + delta.dx,
+          _resizeStartBounds.bottom,
+        );
+        break;
+      case 'bl': // Bottom-left
+        newBounds = Rect.fromLTRB(
+          _resizeStartBounds.left + delta.dx,
+          _resizeStartBounds.top,
+          _resizeStartBounds.right,
+          _resizeStartBounds.bottom + delta.dy,
+        );
+        break;
+      case 'br': // Bottom-right
+        newBounds = Rect.fromLTRB(
+          _resizeStartBounds.left,
+          _resizeStartBounds.top,
+          _resizeStartBounds.right + delta.dx,
+          _resizeStartBounds.bottom + delta.dy,
+        );
+        break;
+    }
+    
+    // Ensure minimum size
+    if (newBounds.width.abs() > 20 && newBounds.height.abs() > 20) {
+      _elements[_selectedElementIndex] = element.copyWith(bounds: newBounds);
+      notifyListeners();
+    }
+  }
+  
+  // End resizing
+  void endResize() {
+    if (_isResizing) {
+      _saveState();
+      _isResizing = false;
+      _resizeHandle = '';
       _redoStack.clear();
       notifyListeners();
     }

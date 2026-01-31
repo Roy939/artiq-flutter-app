@@ -34,13 +34,25 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
           return;
         }
         
+        // Check if clicking on a resize handle of selected element
+        if (canvasState.selectedElementIndex >= 0) {
+          final handle = _getResizeHandleAt(canvasState.elements[canvasState.selectedElementIndex], position);
+          if (handle != null) {
+            canvasState.startResize(handle, position);
+            return;
+          }
+        }
+        
         // Check if user clicked on an existing element
         _selectedElementIndex = _findElementAtPosition(canvasState, position);
         
         if (_selectedElementIndex != null) {
-          // Start dragging the element
+          // Select the element and start dragging
+          canvasState.selectElement(_selectedElementIndex!);
           _dragStart = position;
         } else {
+          // Deselect if clicking empty space
+          canvasState.selectElement(-1);
           // Start drawing or adding new element
           _handleAddElement(canvasState, position);
         }
@@ -55,6 +67,12 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
           return;
         }
         
+        // Handle resizing
+        if (canvasState.isResizing) {
+          canvasState.updateResize(details.localPosition);
+          return;
+        }
+        
         if (_selectedElementIndex != null && _dragStart != null) {
           // Drag the selected element
           final delta = details.localPosition - _dragStart!;
@@ -66,6 +84,12 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
         }
       },
       onPanEnd: (details) {
+        // End resizing if in resize mode
+        if (canvasState.isResizing) {
+          canvasState.endResize();
+          return;
+        }
+        
         _dragStart = null;
         _selectedElementIndex = null;
         
@@ -113,6 +137,22 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
         position.dx <= bounds.right &&
         position.dy >= bounds.top &&
         position.dy <= bounds.bottom;
+  }
+  
+  String? _getResizeHandleAt(CanvasElement element, Offset position) {
+    // Only resizable for elements with bounds (not paths)
+    if (element.type == ElementType.path) return null;
+    
+    const handleSize = 10.0;
+    final bounds = element.bounds;
+    
+    // Check each corner
+    if ((position - bounds.topLeft).distance < handleSize) return 'tl';
+    if ((position - bounds.topRight).distance < handleSize) return 'tr';
+    if ((position - bounds.bottomLeft).distance < handleSize) return 'bl';
+    if ((position - bounds.bottomRight).distance < handleSize) return 'br';
+    
+    return null;
   }
 
   void _handleAddElement(CanvasStateProvider canvasState, Offset position) {
@@ -202,6 +242,17 @@ class CanvasPainter extends CustomPainter {
       }
       canvas.drawPath(path, paint);
     }
+    
+    // Draw selection and resize handles for selected element
+    if (canvasState.selectedElementIndex >= 0 && 
+        canvasState.selectedElementIndex < canvasState.elements.length) {
+      final element = canvasState.elements[canvasState.selectedElementIndex];
+      
+      // Only show resize handles for non-path elements
+      if (element.type != ElementType.path) {
+        _drawSelectionAndHandles(canvas, element);
+      }
+    }
   }
 
   void _paintElement(Canvas canvas, CanvasElement element) {
@@ -283,6 +334,41 @@ class CanvasPainter extends CustomPainter {
     }
   }
 
+  /// Draw selection border and resize handles
+  void _drawSelectionAndHandles(Canvas canvas, CanvasElement element) {
+    final bounds = element.bounds;
+    
+    // Draw selection border
+    final borderPaint = Paint()
+      ..color = Colors.blue
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(bounds, borderPaint);
+    
+    // Draw resize handles at corners
+    final handlePaint = Paint()
+      ..color = Colors.blue
+      ..style = PaintingStyle.fill;
+    
+    const handleSize = 8.0;
+    final handles = [
+      bounds.topLeft,
+      bounds.topRight,
+      bounds.bottomLeft,
+      bounds.bottomRight,
+    ];
+    
+    for (final handle in handles) {
+      canvas.drawCircle(handle, handleSize / 2, handlePaint);
+      // Draw white border around handle for visibility
+      final whiteBorder = Paint()
+        ..color = Colors.white
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+      canvas.drawCircle(handle, handleSize / 2, whiteBorder);
+    }
+  }
+  
   /// Load image from base64 data
   Future<void> _loadImage(String id, String base64Data) async {
     try {
