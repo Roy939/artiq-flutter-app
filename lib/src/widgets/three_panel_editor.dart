@@ -245,6 +245,7 @@ class ThreePanelEditor extends StatelessWidget {
             child: PopupMenuButton<String>(
               tooltip: 'Canvas Size',
               offset: const Offset(0, 50),
+              elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -400,6 +401,7 @@ class ThreePanelEditor extends StatelessWidget {
             child: PopupMenuButton<String>(
               tooltip: 'Load a template',
               offset: const Offset(0, 50),
+              elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
