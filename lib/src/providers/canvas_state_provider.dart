@@ -133,6 +133,10 @@ class CanvasStateProvider extends ChangeNotifier {
   // Clipboard for copy/paste
   CanvasElement? _clipboard;
   
+  // Canvas size
+  double _canvasWidth = 1080.0;
+  double _canvasHeight = 1080.0;
+  
   // Getters
   DrawingTool get selectedTool => _selectedTool;
   List<CanvasElement> get elements => List.unmodifiable(_elements);
@@ -147,6 +151,8 @@ class CanvasStateProvider extends ChangeNotifier {
   Offset get lineStartPoint => _lineStartPoint;
   Offset get lineEndPoint => _lineEndPoint;
   bool get isRotating => _isRotating;
+  double get canvasWidth => _canvasWidth;
+  double get canvasHeight => _canvasHeight;
   
   // Select tool
   void selectTool(DrawingTool tool) {
@@ -535,6 +541,13 @@ class CanvasStateProvider extends ChangeNotifier {
       _redoStack.clear();
       notifyListeners();
     }
+  }
+  
+  // Set canvas size
+  void setCanvasSize(double width, double height) {
+    _canvasWidth = width;
+    _canvasHeight = height;
+    notifyListeners();
   }
   
   // Clear canvas

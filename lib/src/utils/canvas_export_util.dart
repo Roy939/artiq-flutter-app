@@ -11,13 +11,15 @@ class CanvasExportUtil {
   /// Export canvas elements to PNG
   static Future<void> exportToPNG({
     required List<CanvasElement> elements,
+    required double width,
+    required double height,
     String filename = 'artiq_design',
   }) async {
     try {
       // Create HTML canvas
       final canvas = html.CanvasElement(
-        width: canvasWidth.toInt(),
-        height: canvasHeight.toInt(),
+        width: width.toInt(),
+        height: height.toInt(),
       );
       final ctx = canvas.context2D;
       

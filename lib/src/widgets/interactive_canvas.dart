@@ -169,9 +169,26 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
       },
       child: Container(
         color: Colors.white,
-        child: CustomPaint(
-          painter: CanvasPainter(canvasState),
-          child: Container(),
+        child: Center(
+          child: Container(
+            width: canvasState.canvasWidth,
+            height: canvasState.canvasHeight,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: Colors.grey[300]!, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: CustomPaint(
+              painter: CanvasPainter(canvasState),
+              child: Container(),
+            ),
+          ),
         ),
       ),
       ),

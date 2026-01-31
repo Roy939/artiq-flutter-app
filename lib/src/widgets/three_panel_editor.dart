@@ -183,6 +183,8 @@ class ThreePanelEditor extends StatelessWidget {
                 try {
                   await CanvasExportUtil.exportToPNG(
                     elements: canvasState.elements,
+                    width: canvasState.canvasWidth,
+                    height: canvasState.canvasHeight,
                     filename: 'artiq_design_${DateTime.now().millisecondsSinceEpoch}',
                   );
                   
@@ -235,6 +237,161 @@ class ThreePanelEditor extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
+            ),
+          ),
+          // Canvas size dropdown
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: PopupMenuButton<String>(
+              tooltip: 'Canvas Size',
+              offset: const Offset(0, 50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              onSelected: (String sizeId) {
+                final canvasState = Provider.of<CanvasStateProvider>(context, listen: false);
+                
+                // Parse size
+                final sizes = {
+                  'instagram_square': [1080.0, 1080.0],
+                  'instagram_story': [1080.0, 1920.0],
+                  'facebook_post': [1200.0, 630.0],
+                  'facebook_cover': [820.0, 312.0],
+                  'twitter_post': [1200.0, 675.0],
+                  'twitter_header': [1500.0, 500.0],
+                  'linkedin_post': [1200.0, 627.0],
+                  'linkedin_banner': [1584.0, 396.0],
+                  'youtube_thumbnail': [1280.0, 720.0],
+                  'pinterest_pin': [1000.0, 1500.0],
+                };
+                
+                if (sizes.containsKey(sizeId)) {
+                  canvasState.setCanvasSize(sizes[sizeId]![0], sizes[sizeId]![1]);
+                  
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Canvas resized to ${sizes[sizeId]![0].toInt()}x${sizes[sizeId]![1].toInt()}'),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.aspect_ratio, color: Colors.white, size: 18),
+                    SizedBox(width: 8),
+                    Text(
+                      'Canvas Size',
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(Icons.arrow_drop_down, color: Colors.white, size: 20),
+                  ],
+                ),
+              ),
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      'Instagram',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'instagram_square',
+                  child: Text('Square (1080x1080)'),
+                ),
+                const PopupMenuItem(
+                  value: 'instagram_story',
+                  child: Text('Story (1080x1920)'),
+                ),
+                const PopupMenuDivider(),
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      'Facebook',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'facebook_post',
+                  child: Text('Post (1200x630)'),
+                ),
+                const PopupMenuItem(
+                  value: 'facebook_cover',
+                  child: Text('Cover (820x312)'),
+                ),
+                const PopupMenuDivider(),
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      'Twitter/X',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'twitter_post',
+                  child: Text('Post (1200x675)'),
+                ),
+                const PopupMenuItem(
+                  value: 'twitter_header',
+                  child: Text('Header (1500x500)'),
+                ),
+                const PopupMenuDivider(),
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      'LinkedIn',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'linkedin_post',
+                  child: Text('Post (1200x627)'),
+                ),
+                const PopupMenuItem(
+                  value: 'linkedin_banner',
+                  child: Text('Banner (1584x396)'),
+                ),
+                const PopupMenuDivider(),
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      'Other',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'youtube_thumbnail',
+                  child: Text('YouTube Thumbnail (1280x720)'),
+                ),
+                const PopupMenuItem(
+                  value: 'pinterest_pin',
+                  child: Text('Pinterest Pin (1000x1500)'),
+                ),
+              ],
             ),
           ),
           // Templates dropdown button
