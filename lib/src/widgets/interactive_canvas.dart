@@ -293,8 +293,9 @@ class CanvasPainter extends CustomPainter {
             text: element.text,
             style: TextStyle(
               color: element.color,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+              fontSize: element.fontSize,
+              fontWeight: element.fontWeight,
+              fontFamily: element.fontFamily,
             ),
           ),
           textDirection: TextDirection.ltr,

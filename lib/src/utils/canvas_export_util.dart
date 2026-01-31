@@ -105,7 +105,8 @@ class CanvasExportUtil {
       case ElementType.text:
         // Draw text
         ctx.fillStyle = _colorToHex(element.color);
-        ctx.font = 'bold 24px Arial';
+        final fontWeight = element.fontWeight == FontWeight.bold || element.fontWeight.index >= 6 ? 'bold' : 'normal';
+        ctx.font = '$fontWeight ${element.fontSize}px ${element.fontFamily}';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
         ctx.fillText(element.text, element.bounds.left, element.bounds.top);

@@ -34,6 +34,9 @@ class CanvasElement {
   final String text; // For text elements
   final bool filled;
   final String? imageData; // Base64 image data for image elements
+  final double fontSize; // Font size for text elements
+  final String fontFamily; // Font family for text elements
+  final FontWeight fontWeight; // Font weight for text elements
   
   CanvasElement({
     String? id,
@@ -45,6 +48,9 @@ class CanvasElement {
     this.text = '',
     this.filled = false,
     this.imageData,
+    this.fontSize = 24.0,
+    this.fontFamily = 'Arial',
+    this.fontWeight = FontWeight.bold,
   })  : id = id ?? _uuid.v4(),
         points = points ?? [],
         bounds = bounds ?? Rect.zero;
@@ -59,6 +65,9 @@ class CanvasElement {
     String? text,
     bool? filled,
     String? imageData,
+    double? fontSize,
+    String? fontFamily,
+    FontWeight? fontWeight,
   }) {
     return CanvasElement(
       id: id ?? this.id,
@@ -70,6 +79,9 @@ class CanvasElement {
       text: text ?? this.text,
       filled: filled ?? this.filled,
       imageData: imageData ?? this.imageData,
+      fontSize: fontSize ?? this.fontSize,
+      fontFamily: fontFamily ?? this.fontFamily,
+      fontWeight: fontWeight ?? this.fontWeight,
     );
   }
 }
@@ -331,6 +343,63 @@ class CanvasStateProvider extends ChangeNotifier {
       _saveState();
       _isResizing = false;
       _resizeHandle = '';
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Update element color
+  void updateElementColor(int index, Color color) {
+    if (index >= 0 && index < _elements.length) {
+      _saveState();
+      _elements[index] = _elements[index].copyWith(color: color);
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Update element stroke width
+  void updateElementStrokeWidth(int index, double strokeWidth) {
+    if (index >= 0 && index < _elements.length) {
+      _elements[index] = _elements[index].copyWith(strokeWidth: strokeWidth);
+      notifyListeners();
+    }
+  }
+  
+  // Toggle element fill
+  void toggleElementFill(int index) {
+    if (index >= 0 && index < _elements.length) {
+      _saveState();
+      final element = _elements[index];
+      _elements[index] = element.copyWith(filled: !element.filled);
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Update text font size
+  void updateTextFontSize(int index, double fontSize) {
+    if (index >= 0 && index < _elements.length && _elements[index].type == ElementType.text) {
+      _elements[index] = _elements[index].copyWith(fontSize: fontSize);
+      notifyListeners();
+    }
+  }
+  
+  // Update text font family
+  void updateTextFontFamily(int index, String fontFamily) {
+    if (index >= 0 && index < _elements.length && _elements[index].type == ElementType.text) {
+      _saveState();
+      _elements[index] = _elements[index].copyWith(fontFamily: fontFamily);
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Update text font weight
+  void updateTextFontWeight(int index, FontWeight fontWeight) {
+    if (index >= 0 && index < _elements.length && _elements[index].type == ElementType.text) {
+      _saveState();
+      _elements[index] = _elements[index].copyWith(fontWeight: fontWeight);
       _redoStack.clear();
       notifyListeners();
     }

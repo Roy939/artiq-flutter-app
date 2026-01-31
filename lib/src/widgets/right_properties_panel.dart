@@ -119,6 +119,186 @@ class RightPropertiesPanel extends StatelessWidget {
           
           const SizedBox(height: 16),
           
+          // Element properties (shown when element is selected)
+          if (canvasState.selectedElementIndex >= 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.blue[200]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.edit, size: 16, color: Colors.blue[700]),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Editing Element',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        
+                        // Element color picker
+                        const Text(
+                          'Element Color',
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        GestureDetector(
+                          onTap: () => _showElementColorPicker(context, canvasState),
+                          child: Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: canvasState.elements[canvasState.selectedElementIndex].color,
+                              border: Border.all(color: Colors.grey[400]!),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Change Color',
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        
+                        // Stroke width for selected element
+                        if (canvasState.elements[canvasState.selectedElementIndex].type != ElementType.text &&
+                            canvasState.elements[canvasState.selectedElementIndex].type != ElementType.image)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Stroke: ${canvasState.elements[canvasState.selectedElementIndex].strokeWidth.toInt()}',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Slider(
+                                value: canvasState.elements[canvasState.selectedElementIndex].strokeWidth,
+                                min: 1,
+                                max: 20,
+                                divisions: 19,
+                                activeColor: Colors.blue,
+                                onChanged: (value) => canvasState.updateElementStrokeWidth(canvasState.selectedElementIndex, value),
+                              ),
+                            ],
+                          ),
+                        
+                        // Fill toggle for shapes
+                        if (canvasState.elements[canvasState.selectedElementIndex].type == ElementType.rectangle ||
+                            canvasState.elements[canvasState.selectedElementIndex].type == ElementType.circle)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Filled',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Switch(
+                                value: canvasState.elements[canvasState.selectedElementIndex].filled,
+                                activeColor: Colors.blue,
+                                onChanged: (value) => canvasState.toggleElementFill(canvasState.selectedElementIndex),
+                              ),
+                            ],
+                          ),
+                        
+                        // Text formatting controls
+                        if (canvasState.elements[canvasState.selectedElementIndex].type == ElementType.text)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              const Divider(),
+                              const SizedBox(height: 8),
+                              
+                              // Font size
+                              Text(
+                                'Font Size: ${canvasState.elements[canvasState.selectedElementIndex].fontSize.toInt()}',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Slider(
+                                value: canvasState.elements[canvasState.selectedElementIndex].fontSize,
+                                min: 12,
+                                max: 72,
+                                divisions: 60,
+                                activeColor: Colors.blue,
+                                onChanged: (value) => canvasState.updateTextFontSize(canvasState.selectedElementIndex, value),
+                              ),
+                              
+                              const SizedBox(height: 8),
+                              
+                              // Font family
+                              const Text(
+                                'Font Family',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 6),
+                              DropdownButton<String>(
+                                value: canvasState.elements[canvasState.selectedElementIndex].fontFamily,
+                                isExpanded: true,
+                                items: const [
+                                  DropdownMenuItem(value: 'Arial', child: Text('Arial')),
+                                  DropdownMenuItem(value: 'Times New Roman', child: Text('Times New Roman')),
+                                  DropdownMenuItem(value: 'Courier New', child: Text('Courier New')),
+                                  DropdownMenuItem(value: 'Georgia', child: Text('Georgia')),
+                                  DropdownMenuItem(value: 'Verdana', child: Text('Verdana')),
+                                  DropdownMenuItem(value: 'Comic Sans MS', child: Text('Comic Sans MS')),
+                                ],
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    canvasState.updateTextFontFamily(canvasState.selectedElementIndex, value);
+                                  }
+                                },
+                              ),
+                              
+                              const SizedBox(height: 8),
+                              
+                              // Font weight
+                              const Text(
+                                'Font Weight',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 6),
+                              DropdownButton<FontWeight>(
+                                value: canvasState.elements[canvasState.selectedElementIndex].fontWeight,
+                                isExpanded: true,
+                                items: const [
+                                  DropdownMenuItem(value: FontWeight.normal, child: Text('Normal')),
+                                  DropdownMenuItem(value: FontWeight.bold, child: Text('Bold')),
+                                  DropdownMenuItem(value: FontWeight.w300, child: Text('Light')),
+                                  DropdownMenuItem(value: FontWeight.w900, child: Text('Black')),
+                                ],
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    canvasState.updateTextFontWeight(canvasState.selectedElementIndex, value);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          
           // Clear canvas button
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -207,6 +387,31 @@ class RightPropertiesPanel extends StatelessWidget {
           child: ColorPicker(
             pickerColor: canvasState.currentColor,
             onColorChanged: (color) => canvasState.setColor(color),
+            pickerAreaHeightPercent: 0.8,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showElementColorPicker(BuildContext context, CanvasStateProvider canvasState) {
+    if (canvasState.selectedElementIndex < 0) return;
+    
+    final element = canvasState.elements[canvasState.selectedElementIndex];
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Change Element Color'),
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            pickerColor: element.color,
+            onColorChanged: (color) => canvasState.updateElementColor(canvasState.selectedElementIndex, color),
             pickerAreaHeightPercent: 0.8,
           ),
         ),
