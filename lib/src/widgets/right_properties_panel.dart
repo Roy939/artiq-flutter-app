@@ -178,6 +178,31 @@ class RightPropertiesPanel extends StatelessWidget {
                         
                         const SizedBox(height: 12),
                         
+                        // Duplicate button
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              canvasState.duplicateSelectedElement();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Element duplicated'),
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.content_copy, size: 16),
+                            label: const Text('Duplicate (Ctrl+D)'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 12),
+                        
                         // Stroke width for selected element
                         if (canvasState.elements[canvasState.selectedElementIndex].type != ElementType.text &&
                             canvasState.elements[canvasState.selectedElementIndex].type != ElementType.image)

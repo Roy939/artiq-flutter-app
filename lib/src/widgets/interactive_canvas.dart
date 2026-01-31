@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 import 'dart:convert';
@@ -21,7 +22,46 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
   Widget build(BuildContext context) {
     final canvasState = context.watch<CanvasStateProvider>();
     
-    return GestureDetector(
+    return Focus(
+      autofocus: true,
+      onKey: (node, event) {
+        if (event is RawKeyDownEvent) {
+          // Ctrl+C - Copy
+          if (event.isControlPressed && event.logicalKey == LogicalKeyboardKey.keyC) {
+            canvasState.copySelectedElement();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Element copied'),
+                duration: Duration(seconds: 1),
+              ),
+            );
+            return KeyEventResult.handled;
+          }
+          
+          // Ctrl+V - Paste
+          if (event.isControlPressed && event.logicalKey == LogicalKeyboardKey.keyV) {
+            canvasState.pasteElement();
+            return KeyEventResult.handled;
+          }
+          
+          // Ctrl+D - Duplicate
+          if (event.isControlPressed && event.logicalKey == LogicalKeyboardKey.keyD) {
+            canvasState.duplicateSelectedElement();
+            return KeyEventResult.handled;
+          }
+          
+          // Delete key - Remove selected element
+          if (event.logicalKey == LogicalKeyboardKey.delete || 
+              event.logicalKey == LogicalKeyboardKey.backspace) {
+            if (canvasState.selectedElementIndex >= 0) {
+              canvasState.removeElement(canvasState.selectedElementIndex);
+              return KeyEventResult.handled;
+            }
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: GestureDetector(
       onPanStart: (details) {
         final position = details.localPosition;
         
@@ -133,6 +173,7 @@ class _InteractiveCanvasState extends State<InteractiveCanvas> {
           painter: CanvasPainter(canvasState),
           child: Container(),
         ),
+      ),
       ),
     );
   }

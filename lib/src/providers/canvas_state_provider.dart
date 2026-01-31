@@ -130,6 +130,9 @@ class CanvasStateProvider extends ChangeNotifier {
   double _rotationStartAngle = 0.0;
   double _elementStartRotation = 0.0;
   
+  // Clipboard for copy/paste
+  CanvasElement? _clipboard;
+  
   // Getters
   DrawingTool get selectedTool => _selectedTool;
   List<CanvasElement> get elements => List.unmodifiable(_elements);
@@ -418,6 +421,60 @@ class CanvasStateProvider extends ChangeNotifier {
     if (_isRotating) {
       _saveState();
       _isRotating = false;
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Copy selected element to clipboard
+  void copySelectedElement() {
+    if (_selectedElementIndex >= 0 && _selectedElementIndex < _elements.length) {
+      _clipboard = _elements[_selectedElementIndex];
+      // Note: In a real app, you might show a toast/snackbar here
+    }
+  }
+  
+  // Paste element from clipboard
+  void pasteElement() {
+    if (_clipboard != null) {
+      _saveState();
+      
+      // Create a copy with new ID and offset position
+      final offset = const Offset(20, 20);
+      final newElement = _clipboard!.copyWith(
+        id: null, // Will generate new ID
+        bounds: _clipboard!.bounds.shift(offset),
+      );
+      
+      _elements.add(newElement);
+      
+      // Select the newly pasted element
+      _selectedElementIndex = _elements.length - 1;
+      
+      _redoStack.clear();
+      notifyListeners();
+    }
+  }
+  
+  // Duplicate selected element
+  void duplicateSelectedElement() {
+    if (_selectedElementIndex >= 0 && _selectedElementIndex < _elements.length) {
+      _saveState();
+      
+      final element = _elements[_selectedElementIndex];
+      final offset = const Offset(20, 20);
+      
+      // Create a copy with new ID and offset position
+      final newElement = element.copyWith(
+        id: null, // Will generate new ID
+        bounds: element.bounds.shift(offset),
+      );
+      
+      _elements.add(newElement);
+      
+      // Select the newly duplicated element
+      _selectedElementIndex = _elements.length - 1;
+      
       _redoStack.clear();
       notifyListeners();
     }
